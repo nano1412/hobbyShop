@@ -12,14 +12,6 @@ datasource db {
   provider = "postgresql"
 }
 
-generator prismabox {
-  provider                    = "prismabox"
-  typeboxImportDependencyName = "elysia"
-  typeboxImportVariableName   = "t"
-  inputModel                  = true
-  output                      = "../generated/prismabox"
-}
-
 model User {
   id            String    @id
   name          String
@@ -28,28 +20,29 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  role          String?
-  banned        Boolean?  @default(false)
-  banReason     String?
-  banExpires    DateTime?
   sessions      Session[]
   accounts      Account[]
+  itemCreated   Item[]    @relation("createdBy")
+  itemUpdated   Item[]    @relation("updatedBy")
+
+  username        String?
+  displayUsername String?
 
   @@unique([email])
+  @@unique([username])
   @@map("user")
 }
 
 model Session {
-  id             String   @id
-  expiresAt      DateTime
-  token          String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  ipAddress      String?
-  userAgent      String?
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy String?
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@index([userId])
@@ -86,4 +79,177 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model CategoryDetail {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+  items       Item[]
+
+  @@map("category_detail")
+}
+
+model Item {
+  categoryDetail CategoryDetail @relation(fields: [categoryId], references: [id])
+  createdUser    User?          @relation("createdBy", fields: [createdBy], references: [id])
+  updatedUser    User?          @relation("updatedBy", fields: [updatedBy], references: [id])
+
+  id            Int       @id @default(autoincrement())
+  categoryId    Int
+  name          String
+  description   String?
+  thumbnailPath String?
+  thumbnailId   String?
+  brand         String
+  stockQty      Int
+  storePriceThb Float
+  msrpPrice     Float?
+  msrpCurrency  Currency?
+  releaseYear   Int?
+
+  createdAt DateTime  @default(now())
+  createdBy String?
+  updatedAt DateTime? @updatedAt
+  updatedBy String?
+
+  figureCommon        FigureCommon?
+  bandaiGunplaDetail  BandaiGunplaDetail?
+  liquidProductCommon LiquidProductCommon?
+  paintDetail         PaintDetail?
+
+  @@index([categoryId, brand])
+  @@map("item")
+}
+
+model FigureCommon {
+  item      Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement())
+  itemId    Int     @unique
+  fromSerie String?
+  height    Float?
+
+  @@map("figure_common")
+}
+
+model BandaiGunplaDetail {
+  item        Item              @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id          Int               @id @default(autoincrement())
+  itemId      Int               @unique
+  grade       GunplaGrade
+  exclusivity GunplaExclusivity @default(none)
+
+  @@index([grade])
+  @@map("bandai_gunpla_detail")
+}
+
+model LiquidProductCommon {
+  item              Item              @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id                Int               @id @default(autoincrement())
+  itemId            Int               @unique
+  liquidProductType LiquidProductType
+  resinType         ResinType?
+  volumeMl          Int
+
+  @@index([liquidProductType])
+  @@map("liquid_product_common")
+}
+
+model PaintDetail {
+  item                   Item                   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id                     Int                    @id @default(autoincrement())
+  itemId                 Int                    @unique
+  colorTone              ColorTone
+  paintSpecialPorperty   PaintSpecialPorperty?
+  paintApplicationMethod PaintApplicationMethod
+  paintFinish            PaintFinish?
+
+  @@index([colorTone, paintApplicationMethod, paintFinish])
+  @@map("paint_detail")
+}
+
+enum Currency {
+  THB
+  JPY
+  CNY
+  USD
+}
+
+enum GunplaGrade {
+  other
+  NG
+
+  SD
+  EG
+  HG
+  MG
+  PG
+
+  RG
+  RE100
+  FM
+  MGSD
+  MEGA
+}
+
+enum GunplaExclusivity {
+  none
+  gundam_base_limited
+  p_bandai
+  event
+  special_package
+}
+
+enum LiquidProductType {
+  paint
+  primer
+  solvent
+  thinner
+  cement
+}
+
+enum ResinType {
+  acrylic
+  lacquer
+  enamel
+  epoxy
+}
+
+enum PaintApplicationMethod {
+  spray
+  brush
+  air_brush_ready
+  panel_liner
+}
+
+enum PaintFinish {
+  gloss
+  semi_gloss
+  satin
+  matte
+}
+
+enum ColorTone {
+  special
+  red
+  orange
+  yellow
+  green
+  cyan
+  blue
+  purple
+  black
+  white
+  gray
+  pink
+  brown
+
+  gold
+  silver
+  copper
+}
+
+enum PaintSpecialPorperty {
+  clear
+  metalic
 }
