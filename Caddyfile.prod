@@ -1,0 +1,19 @@
+{
+	admin off
+	auto_https off
+}
+
+:3000 {
+	encode gzip zstd
+
+	@backend path /api* /openapi* /swagger* /docs*
+	handle @backend {
+		reverse_proxy localhost:3001
+	}
+
+	root * ./frontend/dist/client
+	handle {
+		try_files {path} /_shell.html
+		file_server
+	}
+}

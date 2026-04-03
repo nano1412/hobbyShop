@@ -1,0 +1,22 @@
+# Default: ignore everything
+**
+
+# Keep monorepo files needed by backend image build
+!package.json
+!bun.lock
+!backend/package.json
+!frontend/package.json
+!backend/**
+
+# Exclude backend noise
+backend/node_modules
+backend/dist
+backend/.turbo
+backend/.cache
+backend/.DS_Store
+
+# Exclude repo noise
+.git
+.github
+.vscode
+**/.DS_Store

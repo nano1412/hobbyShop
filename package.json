@@ -1,0 +1,24 @@
+{
+  "name": "tanstackstart-elysia-betterauth-monorepo",
+  "description": "Monorepo with TanStack Start frontend and Elysia + Better Auth + Prisma backend",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "cd backend && bun run dev",
+    "dev:frontend": "cd frontend && bun run dev",
+    "dev": "echo 'Run `bun run dev:backend` and `bun run dev:frontend` in separate terminals'",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "typescript": "5.9.3"
+  }
+}

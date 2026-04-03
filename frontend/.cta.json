@@ -1,0 +1,15 @@
+{
+  "projectName": "tanstack-mantine-bun-starter",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "bun",
+  "includeExamples": false,
+  "tailwind": true,
+  "addOnOptions": {},
+  "envVarValues": {},
+  "git": true,
+  "routerOnly": false,
+  "version": 1,
+  "framework": "react-cra",
+  "chosenAddOns": ["eslint", "better-auth", "tanstack-query"]
+}

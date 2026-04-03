@@ -1,0 +1,20 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deployments/backend.Dockerfile
+    env_file:
+      - ../backend/.env
+    ports:
+      - '3000:3000'
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: deployments/frontend.Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+    ports:
+      - '80:80'
+    depends_on:
+      - backend
