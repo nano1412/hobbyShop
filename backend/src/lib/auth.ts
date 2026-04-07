@@ -1,7 +1,7 @@
 // src/lib/auth.ts
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { admin, openAPI } from 'better-auth/plugins'
+import { openAPI, username } from 'better-auth/plugins'
 import prisma from '@/lib/db'
 import { env } from '@/config/env'
 
@@ -14,7 +14,7 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
-  plugins: [admin(), openAPI()],
+  plugins: [openAPI(), username()],
 })
 
 let schemaCache: Awaited<ReturnType<typeof auth.api.generateOpenAPISchema>>
