@@ -127,7 +127,7 @@ model FigureCommon {
   id        Int     @id @default(autoincrement())
   itemId    Int     @unique
   fromSerie String?
-  height    Float?
+  heightCm  Int?
 
   @@map("figure_common")
 }
@@ -149,7 +149,7 @@ model LiquidProductCommon {
   itemId            Int               @unique
   liquidProductType LiquidProductType
   resinType         ResinType?
-  volumeMl          Int
+  volumeMl          Float
 
   @@index([liquidProductType])
   @@map("liquid_product_common")
@@ -201,6 +201,7 @@ enum GunplaExclusivity {
 }
 
 enum LiquidProductType {
+  other
   paint
   primer
   solvent
@@ -209,6 +210,7 @@ enum LiquidProductType {
 }
 
 enum ResinType {
+  none
   acrylic
   lacquer
   enamel
@@ -216,6 +218,7 @@ enum ResinType {
 }
 
 enum PaintApplicationMethod {
+  other
   spray
   brush
   air_brush_ready
@@ -223,6 +226,7 @@ enum PaintApplicationMethod {
 }
 
 enum PaintFinish {
+  other
   gloss
   semi_gloss
   satin
@@ -230,7 +234,7 @@ enum PaintFinish {
 }
 
 enum ColorTone {
-  special
+  other
   red
   orange
   yellow
@@ -250,6 +254,7 @@ enum ColorTone {
 }
 
 enum PaintSpecialPorperty {
+  none
   clear
   metalic
 }
