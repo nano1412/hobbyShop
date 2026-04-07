@@ -54,33 +54,35 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <ColorSchemeScript />
-        <HeadContent />
-      </head>
-      <body>
-        <TanStackQueryProvider>
-          <MantineProvider theme={theme}>
-            <ModalsProvider>
-              <Notifications position="top-center" />
-              <RootLayout>{children}</RootLayout>
-            </ModalsProvider>
-          </MantineProvider>
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-            ]}
-          />
-        </TanStackQueryProvider>
-        <Scripts />
-      </body>
+      <MantineProvider>
+        <head>
+          <ColorSchemeScript />
+          <HeadContent />
+        </head>
+        <body>
+          <TanStackQueryProvider>
+            <MantineProvider theme={theme}>
+              <ModalsProvider>
+                <Notifications position="top-center" />
+                <RootLayout>{children}</RootLayout>
+              </ModalsProvider>
+            </MantineProvider>
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                TanStackQueryDevtools,
+              ]}
+            />
+          </TanStackQueryProvider>
+          <Scripts />
+        </body>
+      </MantineProvider>
     </html>
   )
 }
