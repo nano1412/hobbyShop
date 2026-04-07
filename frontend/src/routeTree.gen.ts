@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as NotFoundRouteImport } from './routes/not-found'
+import { Route as ExampleNavRouteImport } from './routes/exampleNav'
+import { Route as AddItemRouteImport } from './routes/addItem'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExampleSignupRouteImport } from './routes/example/signup'
 import { Route as ExampleSigninRouteImport } from './routes/example/signin'
@@ -20,6 +22,16 @@ import { Route as ExampleAuthenticatedRouteImport } from './routes/example/authe
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExampleNavRoute = ExampleNavRouteImport.update({
+  id: '/exampleNav',
+  path: '/exampleNav',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddItemRoute = AddItemRouteImport.update({
+  id: '/addItem',
+  path: '/addItem',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -55,6 +67,8 @@ const ExampleAuthenticatedRoute = ExampleAuthenticatedRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/addItem': typeof AddItemRoute
+  '/exampleNav': typeof ExampleNavRoute
   '/not-found': typeof NotFoundRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
@@ -64,6 +78,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/addItem': typeof AddItemRoute
+  '/exampleNav': typeof ExampleNavRoute
   '/not-found': typeof NotFoundRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
@@ -74,6 +90,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/addItem': typeof AddItemRoute
+  '/exampleNav': typeof ExampleNavRoute
   '/not-found': typeof NotFoundRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
@@ -85,6 +103,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/addItem'
+    | '/exampleNav'
     | '/not-found'
     | '/example/authenticated'
     | '/example/backend'
@@ -94,6 +114,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/addItem'
+    | '/exampleNav'
     | '/not-found'
     | '/example/authenticated'
     | '/example/backend'
@@ -103,6 +125,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/addItem'
+    | '/exampleNav'
     | '/not-found'
     | '/example/authenticated'
     | '/example/backend'
@@ -113,6 +137,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AddItemRoute: typeof AddItemRoute
+  ExampleNavRoute: typeof ExampleNavRoute
   NotFoundRoute: typeof NotFoundRoute
   ExampleAuthenticatedRoute: typeof ExampleAuthenticatedRoute
   ExampleBackendRoute: typeof ExampleBackendRoute
@@ -128,6 +154,20 @@ declare module '@tanstack/react-router' {
       path: '/not-found'
       fullPath: '/not-found'
       preLoaderRoute: typeof NotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exampleNav': {
+      id: '/exampleNav'
+      path: '/exampleNav'
+      fullPath: '/exampleNav'
+      preLoaderRoute: typeof ExampleNavRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/addItem': {
+      id: '/addItem'
+      path: '/addItem'
+      fullPath: '/addItem'
+      preLoaderRoute: typeof AddItemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -177,6 +217,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AddItemRoute: AddItemRoute,
+  ExampleNavRoute: ExampleNavRoute,
   NotFoundRoute: NotFoundRoute,
   ExampleAuthenticatedRoute: ExampleAuthenticatedRoute,
   ExampleBackendRoute: ExampleBackendRoute,
