@@ -10,6 +10,7 @@ import {
   Button,
   NativeSelect,
   NumberInput,
+  Select,
   Textarea,
   TextInput,
 } from '@mantine/core'
@@ -39,20 +40,20 @@ function RouteComponent() {
       msrpCurrency: 'JPY',
       releaseYear: 0,
 
-      gunplaGrade: 'other',
-      gunplaExclusivity: 'none',
+      gunplaGrade: undefined,
+      gunplaExclusivity: undefined,
 
-      fromSerie: '',
-      height: 0,
+      fromSerie: undefined,
+      height: undefined,
 
-      liquidProductType: 'other',
-      resinType: 'none',
-      volumeMl: 0,
+      liquidProductType: undefined,
+      resinType: undefined,
+      volumeMl: undefined,
 
-      colorTone: 'other',
-      paintSpecialPorperty: 'none',
-      paintApplicationMethod: 'other',
-      paintFinish: 'other',
+      colorTone: undefined,
+      paintSpecialPorperty: undefined,
+      paintApplicationMethod: undefined,
+      paintFinish: undefined,
     },
   })
   const preview = addItemForm.values.imageFile
@@ -127,13 +128,29 @@ function RouteComponent() {
     }
   }, [addItemForm.values.categoryId])
 
+  const handleAddItem = async (data: addItem) => {
+    //send img to imagekit
+    //get img path
+    //save onto db
+    //redirect to menu
+    console.log(data)
+  }
+
   return (
     <>
       <Header />
       <div className=" mx-20 p-5 ">
         <h1 className="text-3xl">Creating New Item</h1>
 
-        <form>
+        <form
+          onSubmit={addItemForm.onSubmit((forminfo) =>
+            handleAddItem({
+              ...forminfo,
+              categoryId: Number(forminfo.categoryId),
+              userId: session?.user?.id,
+            }),
+          )}
+        >
           <div className="bg-gray-50 rounded-2xl drop-shadow-xl p-5 mt-5">
             <h2>General Data</h2>
             <div className="grid grid-cols-3 gap-6">
@@ -277,7 +294,8 @@ function RouteComponent() {
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2> Gunpla Detail</h2>
                   <div className="grid grid-cols-2 gap-4">
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Gunpla Grade"
                       data={[
                         'other',
@@ -297,7 +315,8 @@ function RouteComponent() {
                       {...addItemForm.getInputProps('gunplaGrade')}
                     />
 
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Exclusivity"
                       data={[
                         { label: 'none', value: 'none' },
@@ -323,7 +342,8 @@ function RouteComponent() {
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2>Liquid Product</h2>
                   <div className="grid grid-cols-3 gap-4">
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Liquid Product Type"
                       data={[
                         { label: 'other', value: 'other' },
@@ -345,7 +365,8 @@ function RouteComponent() {
                       key={addItemForm.key('liquidProductType')}
                       {...addItemForm.getInputProps('liquidProductType')}
                     />
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Resin Type"
                       data={[
                         { label: 'none', value: 'none' },
@@ -377,7 +398,8 @@ function RouteComponent() {
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2>Paint detail</h2>
                   <div className="grid grid-cols-2 gap-4">
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Color Tone"
                       data={[
                         { label: 'other', value: 'other' },
@@ -400,7 +422,8 @@ function RouteComponent() {
                       key={addItemForm.key('colorTone')}
                       {...addItemForm.getInputProps('colorTone')}
                     />
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Paint Special Porperty"
                       data={[
                         { label: 'none', value: 'none' },
@@ -413,7 +436,8 @@ function RouteComponent() {
                       key={addItemForm.key('paintSpecialPorperty')}
                       {...addItemForm.getInputProps('paintSpecialPorperty')}
                     />
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Paint Application Method"
                       data={[
                         { label: 'other', value: 'other' },
@@ -434,7 +458,8 @@ function RouteComponent() {
                       key={addItemForm.key('paintApplicationMethod')}
                       {...addItemForm.getInputProps('paintApplicationMethod')}
                     />
-                    <NativeSelect
+                    <Select
+                      placeholder="please select value"
                       label="Paint Finish"
                       data={[
                         { label: 'other', value: 'other' },
