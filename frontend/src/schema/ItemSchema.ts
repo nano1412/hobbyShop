@@ -7,6 +7,7 @@ export const addItemSchema = z.object({
   name: z.string(),
   description: z.string(),
   thumbnailPath: z.string(),
+  imageFile: z.file().optional(),
   brand: z.string(),
   stockQty: z.int(), // integer
   storePriceThb: z.number(), // float
