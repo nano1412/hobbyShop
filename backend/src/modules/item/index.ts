@@ -3,12 +3,13 @@ import { ItemModel } from './model'
 import { itemTemp } from './itemTemp'
 import { AddItem } from '@/scripts/addItem'
 import { getImageKitAuth } from '@/scripts/imagekit-uploadimg'
+import { FetchItems, FetchItemWithId } from '@/scripts/readItem'
 
 export const itemModule = new Elysia({
   name: 'module.items',
   prefix: '/api/items',
 })
-  .get('/:id', ({ params }) => itemTemp.testItem(params.id), {
+  .get('/:id', ({ params }) => FetchItemWithId(params.id), {
     detail: {
       tags: ['Item'],
       summary: 'Get Item by id',
@@ -17,7 +18,7 @@ export const itemModule = new Elysia({
       200: ItemModel,
     },
   })
-  .get('/', () => itemTemp.testItems(), {
+  .get('/', () => FetchItems(), {
     detail: {
       tags: ['Item'],
       summary: 'Get Items list',
