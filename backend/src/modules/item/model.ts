@@ -4,12 +4,12 @@ import {
   GunplaExclusivity,
   GunplaGrade,
   LiquidProductType,
-  MsrpCurrency,
   PaintApplicationMethod,
   PaintFinish,
   PaintSpecialPorperty,
   ResinType,
-} from './interface'
+  Currency,
+} from '../../../generated/prisma/client'
 
 const optionalString = t.Optional(t.String())
 const optionalNumeric = t.Optional(t.Numeric())
@@ -26,8 +26,13 @@ export const ItemModel = t.Object({
   stockQty: t.Numeric(),
   storePriceThb: t.Numeric(),
   msrpPrice: optionalNumeric,
-  msrpCurrency: t.Optional(t.Enum(MsrpCurrency)),
+  msrpCurrency: t.Optional(t.Enum(Currency)),
   releaseYear: optionalNumeric,
+
+  createdAt: t.Optional(t.Date()),
+  createdBy: optionalString,
+  updatedAt: t.Optional(t.Date()),
+  updatedBy: optionalString,
 
   gunplaGrade: t.Optional(t.Enum(GunplaGrade)),
   gunplaExclusivity: t.Optional(t.Enum(GunplaExclusivity)),

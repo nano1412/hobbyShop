@@ -17,6 +17,7 @@ export const AddItem = async (data: Item) => {
         msrpCurrency: data.msrpCurrency,
         releaseYear: data.releaseYear,
         createdBy: data.userId ?? null,
+        updatedBy: data.userId ?? null,
 
         // FigureCommon
         ...(data.fromSerie || data.height

@@ -4,11 +4,11 @@ import {
   GunplaExclusivity,
   GunplaGrade,
   LiquidProductType,
-  MsrpCurrency,
   PaintApplicationMethod,
   PaintFinish,
   PaintSpecialPorperty,
   ResinType,
+  Currency,
 } from './interface'
 
 const optionalString = z.string().optional()
@@ -37,8 +37,12 @@ export const itemSchema = z.object({
   stockQty: requiredInt, // integer
   storePriceThb: requiredNumber,
   msrpPrice: optionalNumber,
-  msrpCurrency: z.enum(MsrpCurrency).optional(), // replace with your Prisma enum values
+  msrpCurrency: z.enum(Currency).optional(), // replace with your Prisma enum values
   releaseYear: optionalInt,
+
+  createdBy: optionalString,
+  updatedAt: z.date().optional(),
+  updatedBy: optionalString,
 
   gunplaGrade: z.enum(GunplaGrade).optional(), // Prisma enum mapping
   gunplaExclusivity: z.enum(GunplaExclusivity).optional(), // Prisma enum mapping
