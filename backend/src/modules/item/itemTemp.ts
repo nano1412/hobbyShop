@@ -2,7 +2,6 @@ import { Item } from './model'
 
 export abstract class itemTemp {
   static testItem(id: string): Item {
-    console.log('reaching')
     return {
       id: Number(id),
       categoryId: 0,

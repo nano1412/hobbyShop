@@ -20,7 +20,6 @@ export const ItemModel = t.Object({
   categoryId: t.Numeric(),
   name: t.String(),
   description: optionalString,
-  // imageFile: t.Optional(t.File()),
   thumbnailPath: optionalString,
   thumbnailId: optionalString,
   brand: t.String(),

@@ -29,9 +29,6 @@ export const itemModule = new Elysia({
   .post(
     '/add',
     ({ body }) => {
-      console.log('data recrive (pass validation)')
-      console.log(body)
-      //write on to db (prisma)
       AddItem(body)
     },
     {
@@ -46,7 +43,6 @@ export const itemModule = new Elysia({
     '/imgauth',
     async () => {
       const auth = getImageKitAuth()
-      console.log(auth)
       return auth
     },
     {

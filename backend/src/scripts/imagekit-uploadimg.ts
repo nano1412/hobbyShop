@@ -6,6 +6,5 @@ const imagekit = new ImageKit({
 })
 
 export const getImageKitAuth = () => {
-  console.log('on imagekit server')
   return imagekit.getAuthenticationParameters()
 }

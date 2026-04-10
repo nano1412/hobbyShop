@@ -3,8 +3,7 @@ import { Item } from '@/modules/item/model'
 
 export const AddItem = async (data: Item) => {
   try {
-    console.log(data)
-    const baseItem = await prisma.item.create({
+    await prisma.item.create({
       data: {
         categoryId: data.categoryId ? Number(data.categoryId) : 1,
         name: data.name,
@@ -75,8 +74,6 @@ export const AddItem = async (data: Item) => {
           : {}),
       },
     })
-
-    console.log('add item sucess')
   } catch (err) {
     console.error('Unexpected error:', err)
   }

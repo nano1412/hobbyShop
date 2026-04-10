@@ -94,6 +94,11 @@ export enum Category {
   TOOL = 5,
   LIQUID_PRODUCT = 6,
   PAINT = 7,
+}
 
-  DEBUG = 99,
+export enum AdditionalForm {
+  FIGURE_COMMON = 'figure_common',
+  BANDAI_GUNPLA_DETAIL = 'bandai_gunpla_detail',
+  LIQUID_PRODUCT = 'liquid_product',
+  PAINT = 'paint',
 }

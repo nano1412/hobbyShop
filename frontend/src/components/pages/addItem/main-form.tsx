@@ -18,6 +18,7 @@ import { itemSchema, type item } from '@/schema/ItemSchema'
 import { eden } from '@/lib/eden'
 import { uploadToImageKit } from '@/scripts/imagekit-client'
 import {
+  AdditionalForm,
   Category,
   ColorTone,
   GunplaExclusivity,
@@ -31,11 +32,12 @@ import {
 } from '@/schema/interface'
 import { useNavigate } from '@tanstack/react-router'
 import { modals } from '@mantine/modals'
+import { notifications } from '@mantine/notifications'
 
 export default function AddItem() {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
-  const [additionalForm, setAdditionalForm] = useState<string[]>([])
+  const [additionalForm, setAdditionalForm] = useState<AdditionalForm[]>([])
 
   const addItemForm = useForm<item>({
     validate: zod4Resolver(itemSchema),
@@ -85,39 +87,33 @@ export default function AddItem() {
     const category = rawCategory as Category
     switch (category) {
       case Category.MODEL_KIT:
-        setAdditionalForm(['figure_common'])
+        setAdditionalForm([AdditionalForm.FIGURE_COMMON])
         break
       case Category.GUNPLA:
-        setAdditionalForm(['bandai_gunpla_detail', 'figure_common'])
+        setAdditionalForm([
+          AdditionalForm.BANDAI_GUNPLA_DETAIL,
+          AdditionalForm.FIGURE_COMMON,
+        ])
         break
       case Category.FIGURE:
-        setAdditionalForm(['figure_common'])
+        setAdditionalForm([AdditionalForm.FIGURE_COMMON])
         break
       case Category.TOOL:
         setAdditionalForm([])
         break
-      case Category.LIQUID_PRODUCT: // liquid_product
-        setAdditionalForm(['liquid_product'])
+      case Category.LIQUID_PRODUCT:
+        setAdditionalForm([AdditionalForm.LIQUID_PRODUCT])
         break
       case Category.PAINT:
-        setAdditionalForm(['liquid_product', 'paint'])
-        break
-      case Category.DEBUG:
-        setAdditionalForm([
-          'bandai_gunpla_detail',
-          'figure_common',
-          'liquid_product',
-          'paint',
-        ])
+        setAdditionalForm([AdditionalForm.LIQUID_PRODUCT, AdditionalForm.PAINT])
         break
       default:
-        console.log('other')
         setAdditionalForm([])
     }
 
     //reset field
     //model kit
-    if (!additionalForm.includes('figure_common')) {
+    if (!additionalForm.includes(AdditionalForm.FIGURE_COMMON)) {
       addItemForm.setValues({
         fromSerie: undefined,
         height: undefined,
@@ -125,14 +121,14 @@ export default function AddItem() {
     }
 
     // gunpla
-    if (!additionalForm.includes('bandai_gunpla_detail')) {
+    if (!additionalForm.includes(AdditionalForm.BANDAI_GUNPLA_DETAIL)) {
       addItemForm.setValues({
         gunplaGrade: undefined,
         gunplaExclusivity: undefined,
       })
     }
 
-    if (!additionalForm.includes('liquid_product')) {
+    if (!additionalForm.includes(AdditionalForm.LIQUID_PRODUCT)) {
       addItemForm.setValues({
         liquidProductType: undefined,
         resinType: undefined,
@@ -140,7 +136,7 @@ export default function AddItem() {
       })
     }
 
-    if (!additionalForm.includes('paint')) {
+    if (!additionalForm.includes(AdditionalForm.PAINT)) {
       addItemForm.setValues({
         colorTone: undefined,
         paintSpecialPorperty: undefined,
@@ -176,22 +172,29 @@ export default function AddItem() {
           }
           const { imageFile, ...rest } = data
 
-          const { data: resData, error: requestError } =
-            await eden.api.items.add.post({
-              ...rest,
-              categoryId: Number(data.categoryId),
-            })
+          const { error: requestError } = await eden.api.items.add.post({
+            ...rest,
+            categoryId: Number(data.categoryId),
+          })
 
           if (requestError) {
             console.error('API error', requestError)
+            notifications.show({
+              title: 'Error!',
+              message: 'API request error',
+              color: 'red',
+            })
             return
           }
-
-          console.log('Added item:', resData)
+          notifications.show({ title: 'Success!', message: 'Add item success' })
           navigate({ to: '/item-menu' })
-          // redirect to menu
         } catch (err) {
           console.error(err)
+          notifications.show({
+            title: 'Error!',
+            message: 'The item is failed to upload',
+            color: 'red',
+          })
         }
       },
     })
@@ -322,7 +325,7 @@ export default function AddItem() {
             <div className="bg-gray-100 p-5 mt-5 rounded-2xl drop-shadow-xl">
               <h2 className="text-3xl mt-5">Additional Detail</h2>
               {/* additionalForm.includes("figure_common") */}
-              {additionalForm.includes('figure_common') && (
+              {additionalForm.includes(AdditionalForm.FIGURE_COMMON) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2> Figure Common</h2>
                   <div className="grid grid-cols-2 gap-4">
@@ -343,7 +346,7 @@ export default function AddItem() {
                 </div>
               )}
               {/* additionalForm.includes("bandai_gunpla_detail") */}
-              {additionalForm.includes('bandai_gunpla_detail') && (
+              {additionalForm.includes(AdditionalForm.BANDAI_GUNPLA_DETAIL) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2> Gunpla Detail</h2>
                   <div className="grid grid-cols-2 gap-4">
@@ -381,7 +384,7 @@ export default function AddItem() {
                 </div>
               )}
               {/* liquid_product */}
-              {additionalForm.includes('liquid_product') && (
+              {additionalForm.includes(AdditionalForm.LIQUID_PRODUCT) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2>Liquid Product</h2>
                   <div className="grid grid-cols-3 gap-4">
@@ -409,7 +412,7 @@ export default function AddItem() {
                 </div>
               )}
               {/* paint */}
-              {additionalForm.includes('paint') && (
+              {additionalForm.includes(AdditionalForm.PAINT) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2>Paint detail</h2>
                   <div className="grid grid-cols-2 gap-4">
