@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestEdenRouteImport } from './routes/testEden'
 import { Route as NotFoundRouteImport } from './routes/not-found'
+import { Route as ItemMenuRouteImport } from './routes/item-menu'
 import { Route as ExampleNavRouteImport } from './routes/exampleNav'
-import { Route as AddItemRouteImport } from './routes/addItem'
+import { Route as AddItemRouteImport } from './routes/add-item'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExampleSignupRouteImport } from './routes/example/signup'
 import { Route as ExampleSigninRouteImport } from './routes/example/signin'
@@ -19,9 +21,19 @@ import { Route as ExampleFormRouteImport } from './routes/example/form'
 import { Route as ExampleBackendRouteImport } from './routes/example/backend'
 import { Route as ExampleAuthenticatedRouteImport } from './routes/example/authenticated'
 
+const TestEdenRoute = TestEdenRouteImport.update({
+  id: '/testEden',
+  path: '/testEden',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ItemMenuRoute = ItemMenuRouteImport.update({
+  id: '/item-menu',
+  path: '/item-menu',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExampleNavRoute = ExampleNavRouteImport.update({
@@ -30,8 +42,8 @@ const ExampleNavRoute = ExampleNavRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AddItemRoute = AddItemRouteImport.update({
-  id: '/addItem',
-  path: '/addItem',
+  id: '/add-item',
+  path: '/add-item',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -67,9 +79,11 @@ const ExampleAuthenticatedRoute = ExampleAuthenticatedRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/addItem': typeof AddItemRoute
+  '/add-item': typeof AddItemRoute
   '/exampleNav': typeof ExampleNavRoute
+  '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
+  '/testEden': typeof TestEdenRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -78,9 +92,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/addItem': typeof AddItemRoute
+  '/add-item': typeof AddItemRoute
   '/exampleNav': typeof ExampleNavRoute
+  '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
+  '/testEden': typeof TestEdenRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -90,9 +106,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/addItem': typeof AddItemRoute
+  '/add-item': typeof AddItemRoute
   '/exampleNav': typeof ExampleNavRoute
+  '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
+  '/testEden': typeof TestEdenRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -103,9 +121,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/addItem'
+    | '/add-item'
     | '/exampleNav'
+    | '/item-menu'
     | '/not-found'
+    | '/testEden'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -114,9 +134,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/addItem'
+    | '/add-item'
     | '/exampleNav'
+    | '/item-menu'
     | '/not-found'
+    | '/testEden'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -125,9 +147,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/addItem'
+    | '/add-item'
     | '/exampleNav'
+    | '/item-menu'
     | '/not-found'
+    | '/testEden'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -139,7 +163,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddItemRoute: typeof AddItemRoute
   ExampleNavRoute: typeof ExampleNavRoute
+  ItemMenuRoute: typeof ItemMenuRoute
   NotFoundRoute: typeof NotFoundRoute
+  TestEdenRoute: typeof TestEdenRoute
   ExampleAuthenticatedRoute: typeof ExampleAuthenticatedRoute
   ExampleBackendRoute: typeof ExampleBackendRoute
   ExampleFormRoute: typeof ExampleFormRoute
@@ -149,11 +175,25 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/testEden': {
+      id: '/testEden'
+      path: '/testEden'
+      fullPath: '/testEden'
+      preLoaderRoute: typeof TestEdenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/not-found': {
       id: '/not-found'
       path: '/not-found'
       fullPath: '/not-found'
       preLoaderRoute: typeof NotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/item-menu': {
+      id: '/item-menu'
+      path: '/item-menu'
+      fullPath: '/item-menu'
+      preLoaderRoute: typeof ItemMenuRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exampleNav': {
@@ -163,10 +203,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExampleNavRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/addItem': {
-      id: '/addItem'
-      path: '/addItem'
-      fullPath: '/addItem'
+    '/add-item': {
+      id: '/add-item'
+      path: '/add-item'
+      fullPath: '/add-item'
       preLoaderRoute: typeof AddItemRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -219,7 +259,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddItemRoute: AddItemRoute,
   ExampleNavRoute: ExampleNavRoute,
+  ItemMenuRoute: ItemMenuRoute,
   NotFoundRoute: NotFoundRoute,
+  TestEdenRoute: TestEdenRoute,
   ExampleAuthenticatedRoute: ExampleAuthenticatedRoute,
   ExampleBackendRoute: ExampleBackendRoute,
   ExampleFormRoute: ExampleFormRoute,

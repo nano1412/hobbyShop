@@ -11,33 +11,44 @@ import {
   ResinType,
 } from './interface'
 
-export const itemSchema = z.object({
-  userId: z.string().optional(),
-  id: z.int().optional(), //for update
-  categoryId: z.union([z.string(), z.int()]), // integer
-  name: z.string(),
-  description: z.string(),
+const optionalString = z.string().optional()
+const requiredString = z.string().min(1, 'this field must not be empty')
+const optionalNumber = z.number().optional()
+const requiredNumber = z.number().refine((value) => value > 0, {
+  message: 'this field must not be greater than 0',
+})
+const optionalInt = z.int().optional()
+const requiredInt = z
+  .int('must be integer')
+  .min(1, 'this field must be greater than 0')
 
-  thumbnailPath: z.string().optional(),
-  thumbnailId: z.string().optional(),
+export const itemSchema = z.object({
+  userId: optionalString,
+  id: optionalInt, //for update
+  categoryId: z.union([z.string(), z.int()]), // integer
+  name: requiredString,
+  description: optionalString,
+
+  thumbnailPath: optionalString,
+  thumbnailId: optionalString,
   imageFile: z.file().optional(),
 
-  brand: z.string(),
-  stockQty: z.int(), // integer
-  storePriceThb: z.number(), // float
-  msrpPrice: z.number(), // float
+  brand: requiredString,
+  stockQty: requiredInt, // integer
+  storePriceThb: requiredNumber,
+  msrpPrice: optionalNumber,
   msrpCurrency: z.enum(MsrpCurrency).optional(), // replace with your Prisma enum values
-  releaseYear: z.int(),
+  releaseYear: optionalInt,
 
   gunplaGrade: z.enum(GunplaGrade).optional(), // Prisma enum mapping
   gunplaExclusivity: z.enum(GunplaExclusivity).optional(), // Prisma enum mapping
 
-  fromSerie: z.string().optional(),
-  height: z.number().optional(), // float
+  fromSerie: optionalString,
+  height: optionalNumber,
 
   liquidProductType: z.enum(LiquidProductType).optional(),
   resinType: z.enum(ResinType).optional(),
-  volumeMl: z.number().optional(),
+  volumeMl: optionalNumber,
 
   colorTone: z.enum(ColorTone).optional(),
   paintSpecialPorperty: z.enum(PaintSpecialPorperty).optional(),

@@ -85,3 +85,15 @@ export enum PaintFinish {
   SATIN = 'satin',
   MATTE = 'matte',
 }
+
+export enum Category {
+  OTHER = 1,
+  MODEL_KIT = 2,
+  GUNPLA = 3,
+  FIGURE = 4,
+  TOOL = 5,
+  LIQUID_PRODUCT = 6,
+  PAINT = 7,
+
+  DEBUG = 99,
+}

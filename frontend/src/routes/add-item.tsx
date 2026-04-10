@@ -1,7 +1,7 @@
-import AddItem from '@/components/pages/item/addItem'
+import AddItem from '@/components/pages/addItem/mainform'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/addItem')({
+export const Route = createFileRoute('/add-item')({
   component: RouteComponent,
 })
 

@@ -18,11 +18,19 @@ import { itemSchema, type item } from '@/schema/ItemSchema'
 import { eden } from '@/lib/eden'
 import { uploadToImageKit } from '@/scripts/imagekit-client'
 import {
+  Category,
+  ColorTone,
   GunplaExclusivity,
   GunplaGrade,
+  LiquidProductType,
   MsrpCurrency,
+  PaintApplicationMethod,
+  PaintFinish,
+  PaintSpecialPorperty,
+  ResinType,
 } from '@/schema/interface'
 import { useNavigate } from '@tanstack/react-router'
+import { modals } from '@mantine/modals'
 
 export default function AddItem() {
   const navigate = useNavigate()
@@ -41,9 +49,9 @@ export default function AddItem() {
       brand: '',
       stockQty: 0,
       storePriceThb: 0,
-      msrpPrice: 0,
-      msrpCurrency: MsrpCurrency.JPY,
-      releaseYear: 0,
+      msrpPrice: undefined,
+      msrpCurrency: undefined,
+      releaseYear: undefined,
 
       gunplaGrade: undefined,
       gunplaExclusivity: undefined,
@@ -66,7 +74,6 @@ export default function AddItem() {
     : null
 
   useEffect(() => {
-    console.log(preview)
     return () => {
       if (preview) URL.revokeObjectURL(preview)
     }
@@ -74,34 +81,28 @@ export default function AddItem() {
 
   //caetgory validator
   useEffect(() => {
-    const category = Number(addItemForm.values.categoryId)
+    const rawCategory = Number(addItemForm.values.categoryId)
+    const category = rawCategory as Category
     switch (category) {
-      case 2: //model kit
-        console.log('this is model kit')
+      case Category.MODEL_KIT:
         setAdditionalForm(['figure_common'])
         break
-      case 3: // gunpla
-        console.log('this is gunpla')
+      case Category.GUNPLA:
         setAdditionalForm(['bandai_gunpla_detail', 'figure_common'])
         break
-      case 4: // figure
-        console.log('this is figure')
+      case Category.FIGURE:
         setAdditionalForm(['figure_common'])
         break
-      case 5: // tool
-        console.log('this is tool')
+      case Category.TOOL:
         setAdditionalForm([])
         break
-      case 6: // liquid_product
-        console.log('this is liquid_product')
+      case Category.LIQUID_PRODUCT: // liquid_product
         setAdditionalForm(['liquid_product'])
         break
-      case 7: // paint
-        console.log('this is paint')
+      case Category.PAINT:
         setAdditionalForm(['liquid_product', 'paint'])
         break
-      case 99: // debug_show_all
-        console.log('this is debug')
+      case Category.DEBUG:
         setAdditionalForm([
           'bandai_gunpla_detail',
           'figure_common',
@@ -118,46 +119,82 @@ export default function AddItem() {
     //model kit
     if (!additionalForm.includes('figure_common')) {
       addItemForm.setValues({
-        fromSerie: '',
-        height: 0,
+        fromSerie: undefined,
+        height: undefined,
       })
     }
 
     // gunpla
     if (!additionalForm.includes('bandai_gunpla_detail')) {
       addItemForm.setValues({
-        gunplaGrade: GunplaGrade.OTHER,
-        gunplaExclusivity: GunplaExclusivity.NONE,
+        gunplaGrade: undefined,
+        gunplaExclusivity: undefined,
+      })
+    }
+
+    if (!additionalForm.includes('liquid_product')) {
+      addItemForm.setValues({
+        liquidProductType: undefined,
+        resinType: undefined,
+        volumeMl: undefined,
+      })
+    }
+
+    if (!additionalForm.includes('paint')) {
+      addItemForm.setValues({
+        colorTone: undefined,
+        paintSpecialPorperty: undefined,
+        paintApplicationMethod: undefined,
+        paintFinish: undefined,
       })
     }
   }, [addItemForm.values.categoryId])
 
+  const handleDiscard = () => {
+    modals.openConfirmModal({
+      title: 'Discard item?',
+      centered: true,
+      labels: { confirm: 'Discard', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        navigate({ to: '/item-menu' })
+      },
+    })
+  }
+
   const handleAddItem = async (data: item) => {
-    try {
-      if (data.imageFile) {
-        const { url, fileId } = await uploadToImageKit(data.imageFile)
-        data.thumbnailPath = url
-        data.thumbnailId = fileId
-      }
-      const { imageFile, ...rest } = data
+    modals.openConfirmModal({
+      title: 'Save this item?',
+      centered: true,
+      labels: { confirm: 'OK', cancel: 'Cancel' },
+      onConfirm: async () => {
+        try {
+          if (data.imageFile) {
+            const { url, fileId } = await uploadToImageKit(data.imageFile)
+            data.thumbnailPath = url
+            data.thumbnailId = fileId
+          }
+          const { imageFile, ...rest } = data
 
-      const { data: resData, error: requestError } =
-        await eden.api.items.add.post({
-          ...rest,
-          categoryId: Number(data.categoryId),
-        })
+          const { data: resData, error: requestError } =
+            await eden.api.items.add.post({
+              ...rest,
+              categoryId: Number(data.categoryId),
+            })
 
-      if (requestError) {
-        console.error('API error', requestError)
-        return
-      }
+          if (requestError) {
+            console.error('API error', requestError)
+            return
+          }
 
-      console.log('Added item:', resData)
-      navigate({ to: '/itemmenu' })
-      // redirect to menu
-    } catch (err) {
-      console.error(err)
-    }
+          console.log('Added item:', resData)
+          navigate({ to: '/item-menu' })
+          // redirect to menu
+        } catch (err) {
+          console.error(err)
+        }
+      },
+    })
   }
   return (
     <>
@@ -220,6 +257,7 @@ export default function AddItem() {
                     {...addItemForm.getInputProps('stockQty')}
                   />
                   <NumberInput
+                    withAsterisk
                     label="Store Price (THB)"
                     placeholder="0"
                     key={addItemForm.key('storePriceThb')}
@@ -233,7 +271,8 @@ export default function AddItem() {
                     key={addItemForm.key('msrpPrice')}
                     {...addItemForm.getInputProps('msrpPrice')}
                   />
-                  <NativeSelect
+                  <Select
+                    placeholder="please select value"
                     label="MSRP Currency"
                     data={[
                       { label: 'THB', value: MsrpCurrency.THB },
@@ -295,8 +334,8 @@ export default function AddItem() {
                     />
 
                     <NumberInput
-                      label="Height in cm"
-                      placeholder="0"
+                      label="Height (CM)"
+                      placeholder="value"
                       key={addItemForm.key('height')}
                       {...addItemForm.getInputProps('height')}
                     />
@@ -311,20 +350,7 @@ export default function AddItem() {
                     <Select
                       placeholder="please select value"
                       label="Gunpla Grade"
-                      data={[
-                        'other',
-                        'NG',
-                        'SD',
-                        'EG',
-                        'HG',
-                        'MG',
-                        'PG',
-
-                        'RE100',
-                        'FM',
-                        'MGSD',
-                        'MEGA',
-                      ]}
+                      data={Object.values(GunplaGrade)}
                       key={addItemForm.key('gunplaGrade')}
                       {...addItemForm.getInputProps('gunplaGrade')}
                     />
@@ -333,16 +359,19 @@ export default function AddItem() {
                       placeholder="please select value"
                       label="Exclusivity"
                       data={[
-                        { label: 'none', value: 'none' },
+                        { label: 'none', value: GunplaExclusivity.NONE },
                         {
-                          label: 'Gundam Base Limited',
-                          value: 'gundam_base_limited',
+                          label: 'gundam base limited',
+                          value: GunplaExclusivity.GUNDAM_BASE_LIMITED,
                         },
-                        { label: 'P Bandai', value: 'p_bandai' },
-                        { label: 'Event', value: 'event' },
                         {
-                          label: 'Special Package',
-                          value: 'special_package',
+                          label: 'p-bandai',
+                          value: GunplaExclusivity.P_BANDAI,
+                        },
+                        { label: 'event', value: GunplaExclusivity.EVENT },
+                        {
+                          label: 'special package',
+                          value: GunplaExclusivity.SPECIAL_PACHAGE,
                         },
                       ]}
                       key={addItemForm.key('gunplaExclusivity')}
@@ -359,48 +388,20 @@ export default function AddItem() {
                     <Select
                       placeholder="please select value"
                       label="Liquid Product Type"
-                      data={[
-                        { label: 'other', value: 'other' },
-                        {
-                          label: 'paint',
-                          value: 'paint',
-                        },
-                        { label: 'primer', value: 'primer' },
-                        { label: 'solvent', value: 'solvent' },
-                        {
-                          label: 'thinner',
-                          value: 'thinner',
-                        },
-                        {
-                          label: 'cement',
-                          value: 'cement',
-                        },
-                      ]}
+                      data={Object.values(LiquidProductType)}
                       key={addItemForm.key('liquidProductType')}
                       {...addItemForm.getInputProps('liquidProductType')}
                     />
                     <Select
                       placeholder="please select value"
                       label="Resin Type"
-                      data={[
-                        { label: 'none', value: 'none' },
-                        {
-                          label: 'acrylic',
-                          value: 'acrylic',
-                        },
-                        { label: 'lacquer', value: 'lacquer' },
-                        { label: 'enamel', value: 'enamel' },
-                        {
-                          label: 'epoxy',
-                          value: 'epoxy',
-                        },
-                      ]}
+                      data={Object.values(ResinType)}
                       key={addItemForm.key('resinType')}
                       {...addItemForm.getInputProps('resinType')}
                     />
                     <NumberInput
-                      label="Volumn in ml"
-                      placeholder="0"
+                      label="Volume (ML)"
+                      placeholder="value"
                       key={addItemForm.key('volumeMl')}
                       {...addItemForm.getInputProps('volumeMl')}
                     />
@@ -415,38 +416,14 @@ export default function AddItem() {
                     <Select
                       placeholder="please select value"
                       label="Color Tone"
-                      data={[
-                        { label: 'other', value: 'other' },
-                        { label: 'red', value: 'red' },
-                        { label: 'orange', value: 'orange' },
-                        { label: 'yellow', value: 'yellow' },
-                        { label: 'green', value: 'green' },
-                        { label: 'cyan', value: 'cyan' },
-                        { label: 'blue', value: 'blue' },
-                        { label: 'purple', value: 'purple' },
-                        { label: 'black', value: 'black' },
-                        { label: 'white', value: 'white' },
-                        { label: 'gray', value: 'gray' },
-                        { label: 'pink', value: 'pink' },
-                        { label: 'brown', value: 'brown' },
-                        { label: 'gold', value: 'gold' },
-                        { label: 'silver', value: 'silver' },
-                        { label: 'copper', value: 'copper' },
-                      ]}
+                      data={Object.values(ColorTone)}
                       key={addItemForm.key('colorTone')}
                       {...addItemForm.getInputProps('colorTone')}
                     />
                     <Select
                       placeholder="please select value"
                       label="Paint Special Porperty"
-                      data={[
-                        { label: 'none', value: 'none' },
-                        {
-                          label: 'clear',
-                          value: 'clear',
-                        },
-                        { label: 'metalic', value: 'metalic' },
-                      ]}
+                      data={Object.values(PaintSpecialPorperty)}
                       key={addItemForm.key('paintSpecialPorperty')}
                       {...addItemForm.getInputProps('paintSpecialPorperty')}
                     />
@@ -454,19 +431,19 @@ export default function AddItem() {
                       placeholder="please select value"
                       label="Paint Application Method"
                       data={[
-                        { label: 'other', value: 'other' },
+                        { label: 'other', value: PaintApplicationMethod.OTHER },
                         {
                           label: 'spray',
-                          value: 'spray',
+                          value: PaintApplicationMethod.SPRAY,
                         },
-                        { label: 'brush', value: 'brush' },
+                        { label: 'brush', value: PaintApplicationMethod.BRUSH },
                         {
-                          label: 'air_brush_ready',
-                          value: 'air_brush_ready',
+                          label: 'airbrush ready',
+                          value: PaintApplicationMethod.AIR_BRUSH_READY,
                         },
                         {
-                          label: 'panel_liner',
-                          value: 'panel_liner',
+                          label: 'panel liner',
+                          value: PaintApplicationMethod.PANEL_LINER,
                         },
                       ]}
                       key={addItemForm.key('paintApplicationMethod')}
@@ -476,16 +453,16 @@ export default function AddItem() {
                       placeholder="please select value"
                       label="Paint Finish"
                       data={[
-                        { label: 'other', value: 'other' },
+                        { label: 'other', value: PaintFinish.OTHER },
                         {
                           label: 'gloss',
-                          value: 'gloss',
+                          value: PaintFinish.GLOSS,
                         },
-                        { label: 'semi_gloss', value: 'semi_gloss' },
-                        { label: 'satin', value: 'satin' },
+                        { label: 'semi gloss', value: PaintFinish.SEMI_GLOSS },
+                        { label: 'satin', value: PaintFinish.SATIN },
                         {
                           label: 'matte',
-                          value: 'matte',
+                          value: PaintFinish.MATTE,
                         },
                       ]}
                       key={addItemForm.key('paintFinish')}
@@ -498,7 +475,7 @@ export default function AddItem() {
           )}
 
           <div>
-            <Button className="my-4 mr-5" color="red">
+            <Button className="my-4 mr-5" color="red" onClick={handleDiscard}>
               Discard
             </Button>
 
