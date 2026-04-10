@@ -1,9 +1,8 @@
 import Elysia, { t } from 'elysia'
 import { ItemModel } from './model'
-import { itemTemp } from './itemTemp'
-import { AddItem } from '@/scripts/addItem'
-import { getImageKitAuth } from '@/scripts/imagekit-uploadimg'
-import { FetchItems, FetchItemWithId } from '@/scripts/readItem'
+import { AddItem } from '@/services/addItem.service'
+import { getImageKitAuth } from '@/services/imageKitGetAuth.service'
+import { FetchItems, FetchItemWithId } from '@/services/readItem.service'
 
 export const itemModule = new Elysia({
   name: 'module.items',
