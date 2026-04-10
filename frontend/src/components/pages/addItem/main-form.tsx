@@ -24,7 +24,7 @@ import {
   GunplaExclusivity,
   GunplaGrade,
   LiquidProductType,
-  MsrpCurrency,
+  Currency,
   PaintApplicationMethod,
   PaintFinish,
   PaintSpecialPorperty,
@@ -33,7 +33,6 @@ import {
 import { useNavigate } from '@tanstack/react-router'
 import { modals } from '@mantine/modals'
 import { notifications } from '@mantine/notifications'
-
 export default function AddItem() {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
@@ -45,8 +44,8 @@ export default function AddItem() {
       userId: session?.user.id,
       categoryId: 0,
       name: '',
-      description: '',
-      thumbnailPath: '',
+      description: undefined,
+      thumbnailPath: undefined,
       imageFile: undefined as File | undefined,
       brand: '',
       stockQty: 0,
@@ -175,6 +174,7 @@ export default function AddItem() {
           const { error: requestError } = await eden.api.items.add.post({
             ...rest,
             categoryId: Number(data.categoryId),
+            userId: session?.user.id,
           })
 
           if (requestError) {
@@ -229,7 +229,6 @@ export default function AddItem() {
                       { label: 'tool', value: '5' },
                       { label: 'liquid product', value: '6' },
                       { label: 'paint', value: '7' },
-                      { label: 'debug_show_all', value: '99' },
                     ]}
                     key={addItemForm.key('categoryId')}
                     {...addItemForm.getInputProps('categoryId')}
@@ -278,10 +277,10 @@ export default function AddItem() {
                     placeholder="please select value"
                     label="MSRP Currency"
                     data={[
-                      { label: 'THB', value: MsrpCurrency.THB },
-                      { label: 'JPY', value: MsrpCurrency.JPY },
-                      { label: 'CNY', value: MsrpCurrency.CNY },
-                      { label: 'USD', value: MsrpCurrency.USD },
+                      { label: 'THB', value: Currency.THB },
+                      { label: 'JPY', value: Currency.JPY },
+                      { label: 'CNY', value: Currency.CNY },
+                      { label: 'USD', value: Currency.USD },
                     ]}
                     key={addItemForm.key('msrpCurrency')}
                     {...addItemForm.getInputProps('msrpCurrency')}
@@ -362,19 +361,19 @@ export default function AddItem() {
                       placeholder="please select value"
                       label="Exclusivity"
                       data={[
-                        { label: 'none', value: GunplaExclusivity.NONE },
+                        { label: 'none', value: GunplaExclusivity.none },
                         {
                           label: 'gundam base limited',
-                          value: GunplaExclusivity.GUNDAM_BASE_LIMITED,
+                          value: GunplaExclusivity.gundam_base_limited,
                         },
                         {
                           label: 'p-bandai',
-                          value: GunplaExclusivity.P_BANDAI,
+                          value: GunplaExclusivity.p_bandai,
                         },
-                        { label: 'event', value: GunplaExclusivity.EVENT },
+                        { label: 'event', value: GunplaExclusivity.event },
                         {
                           label: 'special package',
-                          value: GunplaExclusivity.SPECIAL_PACHAGE,
+                          value: GunplaExclusivity.special_package,
                         },
                       ]}
                       key={addItemForm.key('gunplaExclusivity')}
@@ -434,19 +433,19 @@ export default function AddItem() {
                       placeholder="please select value"
                       label="Paint Application Method"
                       data={[
-                        { label: 'other', value: PaintApplicationMethod.OTHER },
+                        { label: 'other', value: PaintApplicationMethod.other },
                         {
                           label: 'spray',
-                          value: PaintApplicationMethod.SPRAY,
+                          value: PaintApplicationMethod.spray,
                         },
-                        { label: 'brush', value: PaintApplicationMethod.BRUSH },
+                        { label: 'brush', value: PaintApplicationMethod.brush },
                         {
                           label: 'airbrush ready',
-                          value: PaintApplicationMethod.AIR_BRUSH_READY,
+                          value: PaintApplicationMethod.air_brush_ready,
                         },
                         {
                           label: 'panel liner',
-                          value: PaintApplicationMethod.PANEL_LINER,
+                          value: PaintApplicationMethod.panel_liner,
                         },
                       ]}
                       key={addItemForm.key('paintApplicationMethod')}
@@ -456,16 +455,16 @@ export default function AddItem() {
                       placeholder="please select value"
                       label="Paint Finish"
                       data={[
-                        { label: 'other', value: PaintFinish.OTHER },
+                        { label: 'other', value: PaintFinish.other },
                         {
                           label: 'gloss',
-                          value: PaintFinish.GLOSS,
+                          value: PaintFinish.gloss,
                         },
-                        { label: 'semi gloss', value: PaintFinish.SEMI_GLOSS },
-                        { label: 'satin', value: PaintFinish.SATIN },
+                        { label: 'semi gloss', value: PaintFinish.semi_gloss },
+                        { label: 'satin', value: PaintFinish.satin },
                         {
                           label: 'matte',
-                          value: PaintFinish.MATTE,
+                          value: PaintFinish.matte,
                         },
                       ]}
                       key={addItemForm.key('paintFinish')}
