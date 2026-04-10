@@ -1,13 +1,19 @@
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 
 export default function Header() {
   const handleSignOut = async () => {
     try {
       await authClient.signOut()
-      console.log('Signed out successfully')
+      notifications.show({ title: 'Success!', message: 'Logout success' })
+      //redirect to login
     } catch (error) {
-      console.error('Sign out failed', error)
+      notifications.show({
+        title: 'Error!',
+        message: 'Signout failed',
+        color: 'red',
+      })
     }
   }
 

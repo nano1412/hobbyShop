@@ -1,7 +1,6 @@
 import Header from '@/components/common/Header'
 import { authClient } from '@/lib/auth-client'
-import { addItemSchema, type addItem } from '@/schema/ItemSchema'
-import { createFileRoute } from '@tanstack/react-router'
+
 import { useEffect, useState } from 'react'
 import { useForm } from '@mantine/form'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
@@ -15,17 +14,33 @@ import {
   TextInput,
 } from '@mantine/core'
 import { Image } from '@mantine/core'
+import { itemSchema, type item } from '@/schema/ItemSchema'
+import { eden } from '@/lib/eden'
+import { uploadToImageKit } from '@/scripts/imagekit-client'
+import {
+  AdditionalForm,
+  Category,
+  ColorTone,
+  GunplaExclusivity,
+  GunplaGrade,
+  LiquidProductType,
+  MsrpCurrency,
+  PaintApplicationMethod,
+  PaintFinish,
+  PaintSpecialPorperty,
+  ResinType,
+} from '@/schema/interface'
+import { useNavigate } from '@tanstack/react-router'
+import { modals } from '@mantine/modals'
+import { notifications } from '@mantine/notifications'
 
-export const Route = createFileRoute('/addItem')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
+export default function AddItem() {
+  const navigate = useNavigate()
   const { data: session } = authClient.useSession()
-  const [additionalForm, setAdditionalForm] = useState<string[]>([])
+  const [additionalForm, setAdditionalForm] = useState<AdditionalForm[]>([])
 
-  const addItemForm = useForm<addItem>({
-    validate: zod4Resolver(addItemSchema),
+  const addItemForm = useForm<item>({
+    validate: zod4Resolver(itemSchema),
     initialValues: {
       userId: session?.user.id,
       categoryId: 0,
@@ -36,9 +51,9 @@ function RouteComponent() {
       brand: '',
       stockQty: 0,
       storePriceThb: 0,
-      msrpPrice: 0,
-      msrpCurrency: 'JPY',
-      releaseYear: 0,
+      msrpPrice: undefined,
+      msrpCurrency: undefined,
+      releaseYear: undefined,
 
       gunplaGrade: undefined,
       gunplaExclusivity: undefined,
@@ -61,96 +76,136 @@ function RouteComponent() {
     : null
 
   useEffect(() => {
-    console.log(preview)
     return () => {
       if (preview) URL.revokeObjectURL(preview)
     }
   }, [preview])
 
   //caetgory validator
-  // dont forgot to add new category
   useEffect(() => {
-    const category = Number(addItemForm.values.categoryId)
+    const rawCategory = Number(addItemForm.values.categoryId)
+    const category = rawCategory as Category
     switch (category) {
-      case 2: //model kit
-        console.log('this is model kit')
-        setAdditionalForm(['figure_common'])
+      case Category.MODEL_KIT:
+        setAdditionalForm([AdditionalForm.FIGURE_COMMON])
         break
-      case 3: // gunpla
-        console.log('this is gunpla')
-        setAdditionalForm(['bandai_gunpla_detail', 'figure_common'])
-        break
-      case 4: // figure
-        console.log('this is figure')
-        setAdditionalForm(['figure_common'])
-        break
-      case 5: // tool
-        console.log('this is tool')
-        setAdditionalForm([])
-        break
-      case 6: // liquid_product
-        console.log('this is liquid_product')
-        setAdditionalForm(['liquid_product'])
-        break
-      case 7: // paint
-        console.log('this is paint')
-        setAdditionalForm(['liquid_product', 'paint'])
-        break
-      case 99: // debug_show_all
-        console.log('this is debug')
+      case Category.GUNPLA:
         setAdditionalForm([
-          'bandai_gunpla_detail',
-          'figure_common',
-          'liquid_product',
-          'paint',
+          AdditionalForm.BANDAI_GUNPLA_DETAIL,
+          AdditionalForm.FIGURE_COMMON,
         ])
         break
+      case Category.FIGURE:
+        setAdditionalForm([AdditionalForm.FIGURE_COMMON])
+        break
+      case Category.TOOL:
+        setAdditionalForm([])
+        break
+      case Category.LIQUID_PRODUCT:
+        setAdditionalForm([AdditionalForm.LIQUID_PRODUCT])
+        break
+      case Category.PAINT:
+        setAdditionalForm([AdditionalForm.LIQUID_PRODUCT, AdditionalForm.PAINT])
+        break
       default:
-        console.log('other')
         setAdditionalForm([])
     }
 
     //reset field
     //model kit
-    if (!additionalForm.includes('figure_common')) {
+    if (!additionalForm.includes(AdditionalForm.FIGURE_COMMON)) {
       addItemForm.setValues({
-        fromSerie: '',
-        height: 0,
+        fromSerie: undefined,
+        height: undefined,
       })
     }
 
     // gunpla
-    if (!additionalForm.includes('bandai_gunpla_detail')) {
+    if (!additionalForm.includes(AdditionalForm.BANDAI_GUNPLA_DETAIL)) {
       addItemForm.setValues({
-        gunplaGrade: 'other',
-        gunplaExclusivity: 'none',
+        gunplaGrade: undefined,
+        gunplaExclusivity: undefined,
+      })
+    }
+
+    if (!additionalForm.includes(AdditionalForm.LIQUID_PRODUCT)) {
+      addItemForm.setValues({
+        liquidProductType: undefined,
+        resinType: undefined,
+        volumeMl: undefined,
+      })
+    }
+
+    if (!additionalForm.includes(AdditionalForm.PAINT)) {
+      addItemForm.setValues({
+        colorTone: undefined,
+        paintSpecialPorperty: undefined,
+        paintApplicationMethod: undefined,
+        paintFinish: undefined,
       })
     }
   }, [addItemForm.values.categoryId])
 
-  const handleAddItem = async (data: addItem) => {
-    //send img to imagekit
-    //get img path
-    //save onto db
-    //redirect to menu
-    console.log(data)
+  const handleDiscard = () => {
+    modals.openConfirmModal({
+      title: 'Discard item?',
+      centered: true,
+      labels: { confirm: 'Discard', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        navigate({ to: '/item-menu' })
+      },
+    })
   }
 
+  const handleAddItem = async (data: item) => {
+    modals.openConfirmModal({
+      title: 'Save this item?',
+      centered: true,
+      labels: { confirm: 'OK', cancel: 'Cancel' },
+      onConfirm: async () => {
+        try {
+          if (data.imageFile) {
+            const { url, fileId } = await uploadToImageKit(data.imageFile)
+            data.thumbnailPath = url
+            data.thumbnailId = fileId
+          }
+          const { imageFile, ...rest } = data
+
+          const { error: requestError } = await eden.api.items.add.post({
+            ...rest,
+            categoryId: Number(data.categoryId),
+          })
+
+          if (requestError) {
+            console.error('API error', requestError)
+            notifications.show({
+              title: 'Error!',
+              message: 'API request error',
+              color: 'red',
+            })
+            return
+          }
+          notifications.show({ title: 'Success!', message: 'Add item success' })
+          navigate({ to: '/item-menu' })
+        } catch (err) {
+          console.error(err)
+          notifications.show({
+            title: 'Error!',
+            message: 'The item is failed to upload',
+            color: 'red',
+          })
+        }
+      },
+    })
+  }
   return (
     <>
       <Header />
       <div className=" mx-20 p-5 ">
         <h1 className="text-3xl">Creating New Item</h1>
 
-        <form
-          onSubmit={addItemForm.onSubmit((forminfo) =>
-            handleAddItem({
-              ...forminfo,
-              categoryId: Number(forminfo.categoryId),
-              userId: session?.user?.id,
-            }),
-          )}
-        >
+        <form onSubmit={addItemForm.onSubmit(handleAddItem)}>
           <div className="bg-gray-50 rounded-2xl drop-shadow-xl p-5 mt-5">
             <h2>General Data</h2>
             <div className="grid grid-cols-3 gap-6">
@@ -205,6 +260,7 @@ function RouteComponent() {
                     {...addItemForm.getInputProps('stockQty')}
                   />
                   <NumberInput
+                    withAsterisk
                     label="Store Price (THB)"
                     placeholder="0"
                     key={addItemForm.key('storePriceThb')}
@@ -218,22 +274,22 @@ function RouteComponent() {
                     key={addItemForm.key('msrpPrice')}
                     {...addItemForm.getInputProps('msrpPrice')}
                   />
-                  <NativeSelect
+                  <Select
+                    placeholder="please select value"
                     label="MSRP Currency"
                     data={[
-                      { label: 'THB', value: 'THB' },
-                      { label: 'JPY', value: 'JPY' },
-                      { label: 'CNY', value: 'CNY' },
-                      { label: 'USD', value: 'USD' },
+                      { label: 'THB', value: MsrpCurrency.THB },
+                      { label: 'JPY', value: MsrpCurrency.JPY },
+                      { label: 'CNY', value: MsrpCurrency.CNY },
+                      { label: 'USD', value: MsrpCurrency.USD },
                     ]}
                     key={addItemForm.key('msrpCurrency')}
                     {...addItemForm.getInputProps('msrpCurrency')}
                   />
                 </div>
               </div>
-              {/* img and description */}
+
               <div>
-                {/* img */}
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}
                   maxFiles={1}
@@ -269,7 +325,7 @@ function RouteComponent() {
             <div className="bg-gray-100 p-5 mt-5 rounded-2xl drop-shadow-xl">
               <h2 className="text-3xl mt-5">Additional Detail</h2>
               {/* additionalForm.includes("figure_common") */}
-              {additionalForm.includes('figure_common') && (
+              {additionalForm.includes(AdditionalForm.FIGURE_COMMON) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2> Figure Common</h2>
                   <div className="grid grid-cols-2 gap-4">
@@ -281,8 +337,8 @@ function RouteComponent() {
                     />
 
                     <NumberInput
-                      label="Height in cm"
-                      placeholder="0"
+                      label="Height (CM)"
+                      placeholder="value"
                       key={addItemForm.key('height')}
                       {...addItemForm.getInputProps('height')}
                     />
@@ -290,27 +346,14 @@ function RouteComponent() {
                 </div>
               )}
               {/* additionalForm.includes("bandai_gunpla_detail") */}
-              {additionalForm.includes('bandai_gunpla_detail') && (
+              {additionalForm.includes(AdditionalForm.BANDAI_GUNPLA_DETAIL) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2> Gunpla Detail</h2>
                   <div className="grid grid-cols-2 gap-4">
                     <Select
                       placeholder="please select value"
                       label="Gunpla Grade"
-                      data={[
-                        'other',
-                        'NG',
-                        'SD',
-                        'EG',
-                        'HG',
-                        'MG',
-                        'PG',
-
-                        'RE100',
-                        'FM',
-                        'MGSD',
-                        'MEGA',
-                      ]}
+                      data={Object.values(GunplaGrade)}
                       key={addItemForm.key('gunplaGrade')}
                       {...addItemForm.getInputProps('gunplaGrade')}
                     />
@@ -319,16 +362,19 @@ function RouteComponent() {
                       placeholder="please select value"
                       label="Exclusivity"
                       data={[
-                        { label: 'none', value: 'none' },
+                        { label: 'none', value: GunplaExclusivity.NONE },
                         {
-                          label: 'Gundam Base Limited',
-                          value: 'gundam_base_limited',
+                          label: 'gundam base limited',
+                          value: GunplaExclusivity.GUNDAM_BASE_LIMITED,
                         },
-                        { label: 'P Bandai', value: 'p_bandai' },
-                        { label: 'Event', value: 'event' },
                         {
-                          label: 'Special Package',
-                          value: 'special_package',
+                          label: 'p-bandai',
+                          value: GunplaExclusivity.P_BANDAI,
+                        },
+                        { label: 'event', value: GunplaExclusivity.EVENT },
+                        {
+                          label: 'special package',
+                          value: GunplaExclusivity.SPECIAL_PACHAGE,
                         },
                       ]}
                       key={addItemForm.key('gunplaExclusivity')}
@@ -338,55 +384,27 @@ function RouteComponent() {
                 </div>
               )}
               {/* liquid_product */}
-              {additionalForm.includes('liquid_product') && (
+              {additionalForm.includes(AdditionalForm.LIQUID_PRODUCT) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2>Liquid Product</h2>
                   <div className="grid grid-cols-3 gap-4">
                     <Select
                       placeholder="please select value"
                       label="Liquid Product Type"
-                      data={[
-                        { label: 'other', value: 'other' },
-                        {
-                          label: 'paint',
-                          value: 'paint',
-                        },
-                        { label: 'primer', value: 'primer' },
-                        { label: 'solvent', value: 'solvent' },
-                        {
-                          label: 'thinner',
-                          value: 'thinner',
-                        },
-                        {
-                          label: 'cement',
-                          value: 'cement',
-                        },
-                      ]}
+                      data={Object.values(LiquidProductType)}
                       key={addItemForm.key('liquidProductType')}
                       {...addItemForm.getInputProps('liquidProductType')}
                     />
                     <Select
                       placeholder="please select value"
                       label="Resin Type"
-                      data={[
-                        { label: 'none', value: 'none' },
-                        {
-                          label: 'acrylic',
-                          value: 'acrylic',
-                        },
-                        { label: 'lacquer', value: 'lacquer' },
-                        { label: 'enamel', value: 'enamel' },
-                        {
-                          label: 'epoxy',
-                          value: 'epoxy',
-                        },
-                      ]}
+                      data={Object.values(ResinType)}
                       key={addItemForm.key('resinType')}
                       {...addItemForm.getInputProps('resinType')}
                     />
                     <NumberInput
-                      label="Volumn in ml"
-                      placeholder="0"
+                      label="Volume (ML)"
+                      placeholder="value"
                       key={addItemForm.key('volumeMl')}
                       {...addItemForm.getInputProps('volumeMl')}
                     />
@@ -394,45 +412,21 @@ function RouteComponent() {
                 </div>
               )}
               {/* paint */}
-              {additionalForm.includes('paint') && (
+              {additionalForm.includes(AdditionalForm.PAINT) && (
                 <div className="bg-white rounded-2xl drop-shadow-xl p-5 mt-5">
                   <h2>Paint detail</h2>
                   <div className="grid grid-cols-2 gap-4">
                     <Select
                       placeholder="please select value"
                       label="Color Tone"
-                      data={[
-                        { label: 'other', value: 'other' },
-                        { label: 'red', value: 'red' },
-                        { label: 'orange', value: 'orange' },
-                        { label: 'yellow', value: 'yellow' },
-                        { label: 'green', value: 'green' },
-                        { label: 'cyan', value: 'cyan' },
-                        { label: 'blue', value: 'blue' },
-                        { label: 'purple', value: 'purple' },
-                        { label: 'black', value: 'black' },
-                        { label: 'white', value: 'white' },
-                        { label: 'gray', value: 'gray' },
-                        { label: 'pink', value: 'pink' },
-                        { label: 'brown', value: 'brown' },
-                        { label: 'gold', value: 'gold' },
-                        { label: 'silver', value: 'silver' },
-                        { label: 'copper', value: 'copper' },
-                      ]}
+                      data={Object.values(ColorTone)}
                       key={addItemForm.key('colorTone')}
                       {...addItemForm.getInputProps('colorTone')}
                     />
                     <Select
                       placeholder="please select value"
                       label="Paint Special Porperty"
-                      data={[
-                        { label: 'none', value: 'none' },
-                        {
-                          label: 'clear',
-                          value: 'clear',
-                        },
-                        { label: 'metalic', value: 'metalic' },
-                      ]}
+                      data={Object.values(PaintSpecialPorperty)}
                       key={addItemForm.key('paintSpecialPorperty')}
                       {...addItemForm.getInputProps('paintSpecialPorperty')}
                     />
@@ -440,19 +434,19 @@ function RouteComponent() {
                       placeholder="please select value"
                       label="Paint Application Method"
                       data={[
-                        { label: 'other', value: 'other' },
+                        { label: 'other', value: PaintApplicationMethod.OTHER },
                         {
                           label: 'spray',
-                          value: 'spray',
+                          value: PaintApplicationMethod.SPRAY,
                         },
-                        { label: 'brush', value: 'brush' },
+                        { label: 'brush', value: PaintApplicationMethod.BRUSH },
                         {
-                          label: 'air_brush_ready',
-                          value: 'air_brush_ready',
+                          label: 'airbrush ready',
+                          value: PaintApplicationMethod.AIR_BRUSH_READY,
                         },
                         {
-                          label: 'panel_liner',
-                          value: 'panel_liner',
+                          label: 'panel liner',
+                          value: PaintApplicationMethod.PANEL_LINER,
                         },
                       ]}
                       key={addItemForm.key('paintApplicationMethod')}
@@ -462,16 +456,16 @@ function RouteComponent() {
                       placeholder="please select value"
                       label="Paint Finish"
                       data={[
-                        { label: 'other', value: 'other' },
+                        { label: 'other', value: PaintFinish.OTHER },
                         {
                           label: 'gloss',
-                          value: 'gloss',
+                          value: PaintFinish.GLOSS,
                         },
-                        { label: 'semi_gloss', value: 'semi_gloss' },
-                        { label: 'satin', value: 'satin' },
+                        { label: 'semi gloss', value: PaintFinish.SEMI_GLOSS },
+                        { label: 'satin', value: PaintFinish.SATIN },
                         {
                           label: 'matte',
-                          value: 'matte',
+                          value: PaintFinish.MATTE,
                         },
                       ]}
                       key={addItemForm.key('paintFinish')}
@@ -484,7 +478,7 @@ function RouteComponent() {
           )}
 
           <div>
-            <Button className="my-4 mr-5" color="red">
+            <Button className="my-4 mr-5" color="red" onClick={handleDiscard}>
               Discard
             </Button>
 
