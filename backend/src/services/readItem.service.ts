@@ -1,6 +1,7 @@
 import prisma from '@/lib/db'
 import { Item } from '@/modules/item/model'
 import { Prisma } from '../../generated/prisma/client'
+import { Debug } from '@prisma/client/runtime/client'
 
 type ItemWithRelations = Prisma.ItemGetPayload<{
   include: {
@@ -43,20 +44,105 @@ const PrismaToElysiaItemMapper = (data: ItemWithRelations): Item => {
   }
 }
 
-export const FetchItems = async (): Promise<Item[]> => {
+export const FetchItems = async (
+  query: ItemQuery,
+): Promise<{
+  data: Item[]
+  meta: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}> => {
   try {
-    const items = await prisma.item.findMany({
-      include: {
-        figureCommon: true,
-        bandaiGunplaDetail: true,
-        liquidProductCommon: true,
-        paintDetail: true,
+    const {
+      page = '1',
+      limit = '10',
+      search,
+      sort = 'createdAt:desc',
+      categoryIds,
+    } = query
+
+    const pageNumber = parseInt(page)
+    const take = parseInt(limit)
+    const skip = (pageNumber - 1) * take
+
+    // ---- sorting ----
+    const [fieldRaw, orderRaw] = sort.split(':')
+
+    const allowedSortFields = [
+      'id',
+      'name',
+      'createdAt',
+      'updateAt',
+      'storePriceThb',
+      'msrpPrice',
+      'releaseYear',
+      'stockQty',
+    ]
+    const sortField = allowedSortFields.includes(fieldRaw)
+      ? fieldRaw
+      : 'createdAt'
+
+    const sortOrder = orderRaw === 'asc' ? 'asc' : 'desc'
+
+    // ---- filtering ----
+    const where: Prisma.ItemWhereInput = {}
+
+    if (search) {
+      where.name = {
+        contains: search,
+        mode: 'insensitive',
+      }
+    }
+
+    if (categoryIds) {
+      where.categoryId = {
+        in: categoryIds.split(',').map((id) => Number(id)),
+      }
+    }
+
+    // ---- query ----
+    const [items, total] = await Promise.all([
+      prisma.item.findMany({
+        where,
+        include: {
+          figureCommon: true,
+          bandaiGunplaDetail: true,
+          liquidProductCommon: true,
+          paintDetail: true,
+        },
+        orderBy: {
+          [sortField]: sortOrder,
+        },
+        skip,
+        take,
+      }),
+      prisma.item.count({ where }),
+    ])
+
+    return {
+      data: items.map(PrismaToElysiaItemMapper),
+      meta: {
+        page: pageNumber,
+        limit: take,
+        total,
+        totalPages: Math.ceil(total / take),
       },
-    })
-    return items.map(PrismaToElysiaItemMapper)
+    }
   } catch (err) {
     console.error('Unexpected error:', err)
-    return []
+
+    return {
+      data: [],
+      meta: {
+        page: 1,
+        limit: 10,
+        total: 0,
+        totalPages: 0,
+      },
+    }
   }
 }
 

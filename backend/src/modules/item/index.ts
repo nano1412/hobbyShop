@@ -17,15 +17,30 @@ export const itemModule = new Elysia({
       200: ItemModel,
     },
   })
-  .get('/', () => FetchItems(), {
-    detail: {
-      tags: ['Item'],
-      summary: 'Get Items list',
+  .get(
+    '/',
+    async ({ query }) => {
+      const result = await FetchItems(query)
+      return result
     },
-    response: {
-      200: t.Array(ItemModel),
+    {
+      detail: {
+        tags: ['Item'],
+        summary: 'Get Items list',
+      },
+      response: {
+        200: t.Object({
+          data: t.Array(ItemModel),
+          meta: t.Object({
+            page: t.Number(),
+            limit: t.Number(),
+            total: t.Number(),
+            totalPages: t.Number(),
+          }),
+        }),
+      },
     },
-  })
+  )
   .post(
     '/add',
     ({ body }) => {
