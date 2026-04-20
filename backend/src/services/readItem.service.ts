@@ -60,7 +60,8 @@ export const FetchItems = async (
       page = '1',
       limit = '10',
       search,
-      sort = 'createdAt:desc',
+      sort = 'createdAt',
+      order = 'desc',
       categoryIds,
     } = query
 
@@ -69,8 +70,6 @@ export const FetchItems = async (
     const skip = (pageNumber - 1) * take
 
     // ---- sorting ----
-    const [fieldRaw, orderRaw] = sort.split(':')
-
     const allowedSortFields = [
       'id',
       'name',
@@ -81,11 +80,10 @@ export const FetchItems = async (
       'releaseYear',
       'stockQty',
     ]
-    const sortField = allowedSortFields.includes(fieldRaw)
-      ? fieldRaw
-      : 'createdAt'
+    const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt'
 
-    const sortOrder = orderRaw === 'asc' ? 'asc' : 'desc'
+    const sortOrder = order === 'asc' ? 'asc' : 'desc'
+    console.log(sortOrder)
 
     // ---- filtering ----
     const where: Prisma.ItemWhereInput = {}
