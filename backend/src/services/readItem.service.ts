@@ -72,6 +72,7 @@ export const FetchItems = async (
     // ---- sorting ----
     const allowedSortFields = [
       'id',
+      'categoryId',
       'name',
       'createdAt',
       'updateAt',

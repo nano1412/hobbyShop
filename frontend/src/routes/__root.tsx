@@ -17,6 +17,8 @@ import { ModalsProvider } from '@mantine/modals'
 import appCss from '../styles/styles.css?url'
 import '../styles/fonts.css'
 
+import '@mantine/core/styles.layer.css'
+import 'mantine-datatable/styles.layer.css'
 import '@mantine/notifications/styles.css'
 import '@mantine/dates/styles.css'
 import '@mantine/dropzone/styles.css'

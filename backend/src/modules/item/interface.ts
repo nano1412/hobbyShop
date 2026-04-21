@@ -3,5 +3,6 @@ type ItemQuery = {
   limit?: string
   search?: string
   sort?: string
+  order?: string
   categoryIds?: string
 }
