@@ -13,19 +13,14 @@ import {
   Pill,
 } from '@mantine/core'
 import { IconEye, IconPhoto, IconTrash } from '@tabler/icons-react'
+import { QueryItemSchema, type queryItem } from '@/schema/QueryItemSchema'
+import { useForm } from '@mantine/form'
+import { zod4Resolver } from 'mantine-form-zod-resolver'
+import { CategoryPill } from './category-pill'
 
 type itemsResponse = NonNullable<
   Awaited<ReturnType<typeof eden.api.items.get>>['data']
 >
-
-type ItemQuery = {
-  page?: string
-  limit?: string
-  search?: string
-  sort?: string
-  order?: string
-  categoryIds?: string
-}
 
 const PAGE_SIZES = [10, 15, 20]
 
@@ -33,36 +28,41 @@ export default function ItemManuPage() {
   const [loading, setLoading] = useState(false)
   const [resultItems, setResultItems] = useState<itemsResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [searchInput, setSearchInput] = useState<string>('')
-  const [categoryIds, setCategoryIds] = useState<string[]>([])
-  const [query, setQuery] = useState<ItemQuery>({
-    page: '1',
-    limit: '10',
-    sort: 'createdAt',
-    order: 'desc',
-    search: '',
-    categoryIds: '',
+
+  const form = useForm<queryItem>({
+    validate: zod4Resolver(QueryItemSchema),
+    initialValues: {
+      page: '1',
+      limit: '10',
+      sort: 'createdAt',
+      order: 'desc',
+      search: '',
+      categoryIds: '',
+    },
   })
 
   useEffect(() => {
-    const callItems = async () => {
-      setLoading(true)
-      setError(null)
+    callItems(form.values)
+  }, [])
 
-      const { data, error: requestError } = await eden.api.items.get({ query })
+  const callItems = async (form: queryItem) => {
+    setLoading(true)
+    setError(null)
 
-      if (requestError) {
-        setResultItems(null)
-        setError('Request failed. Check backend server and CORS settings.')
-        setLoading(false)
-        return
-      }
+    const { data, error: requestError } = await eden.api.items.get({
+      query: form,
+    })
 
-      setResultItems(data)
+    if (requestError) {
+      setResultItems(null)
+      setError('Request failed. Check backend server and CORS settings.')
       setLoading(false)
+      return
     }
-    callItems()
-  }, [query])
+
+    setResultItems(data)
+    setLoading(false)
+  }
 
   return (
     <>
@@ -70,22 +70,12 @@ export default function ItemManuPage() {
       {/* <Pill c="blue">Blue pill</Pill>
       <Pill bg="green">Red pill</Pill> */}
       <div className=" mx-20 p-5 ">
-        <>
-          {/* <ItemsTable {...resultItems} /> */}
+        <form onSubmit={form.onSubmit(callItems)}>
           <div>
             <TextInput
               placeholder="Search..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.currentTarget.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  setQuery((q) => ({
-                    ...q,
-                    search: searchInput,
-                    page: '1',
-                  }))
-                }
-              }}
+              key={form.key('search')}
+              {...form.getInputProps('search')}
             />
             <MultiSelect
               placeholder="filter category"
@@ -98,16 +88,18 @@ export default function ItemManuPage() {
                 { label: 'liquid product', value: '6' },
                 { label: 'paint', value: '7' },
               ]}
-              value={categoryIds}
+              value={
+                form.values.categoryIds
+                  ? form.values.categoryIds.split(',')
+                  : []
+              }
               onChange={(values) => {
-                setCategoryIds(values)
-
-                setQuery((q) => ({
-                  ...q,
-                  categoryIds: values.join(','),
-                }))
+                form.setFieldValue('categoryIds', values.join(','))
               }}
             />
+            <Button className="my-4" type="submit">
+              summit
+            </Button>
             <Button>+ Create new Item</Button>
           </div>
 
@@ -117,27 +109,41 @@ export default function ItemManuPage() {
             recordsPerPageOptions={PAGE_SIZES}
             totalRecords={resultItems?.meta.total || 0}
             page={Number(resultItems?.meta.page)}
-            onPageChange={(p) => setQuery((q) => ({ ...q, page: String(p) }))}
-            recordsPerPage={Number(resultItems?.meta.limit)}
-            onRecordsPerPageChange={(l: number) =>
-              setQuery((q) => ({
-                ...q,
-                limit: String(l),
-                page: '1', // reset page
-              }))
-            }
-            sortStatus={{
-              columnAccessor: query.sort ? query.sort : 'createdAt',
-              direction: query.order === 'asc' ? 'asc' : 'desc',
+            onPageChange={(p) => {
+              const nextValues = {
+                ...form.values,
+                page: String(p),
+              }
+
+              form.setValues(nextValues)
+              callItems(nextValues)
             }}
-            onSortStatusChange={({ columnAccessor, direction }) =>
-              setQuery((q) => ({
-                ...q,
+            recordsPerPage={Number(resultItems?.meta.limit)}
+            onRecordsPerPageChange={(l: number) => {
+              const nextValues = {
+                ...form.values,
+                limit: String(l),
+                page: '1',
+              }
+
+              form.setValues(nextValues)
+              callItems(nextValues)
+            }}
+            sortStatus={{
+              columnAccessor: form.values.sort ? form.values.sort : 'createdAt',
+              direction: form.values.order === 'asc' ? 'asc' : 'desc',
+            }}
+            onSortStatusChange={({ columnAccessor, direction }) => {
+              const nextValues = {
+                ...form.values,
                 sort: columnAccessor.toString(),
                 order: direction,
                 page: '1',
-              }))
-            }
+              }
+
+              form.setValues(nextValues)
+              callItems(nextValues)
+            }}
             columns={[
               {
                 title: 'item image',
@@ -161,7 +167,11 @@ export default function ItemManuPage() {
                   ),
               },
               { accessor: 'name', sortable: true },
-              { accessor: 'categoryId', sortable: true },
+              {
+                accessor: 'categoryId',
+                sortable: true,
+                render: (item) => <CategoryPill categoryId={item.categoryId} />,
+              },
               { accessor: 'storePriceThb', sortable: true },
               { accessor: 'stockQty', sortable: true },
               { accessor: 'updateAt', sortable: true },
@@ -187,7 +197,7 @@ export default function ItemManuPage() {
             ]}
             records={resultItems?.data}
           ></DataTable>
-        </>
+        </form>
       </div>
     </>
   )
