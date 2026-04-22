@@ -102,23 +102,22 @@ export const FetchItems = async (
     }
 
     // ---- query ----
-    const [items, total] = await Promise.all([
-      prisma.item.findMany({
-        where,
-        include: {
-          figureCommon: true,
-          bandaiGunplaDetail: true,
-          liquidProductCommon: true,
-          paintDetail: true,
-        },
-        orderBy: {
-          [sortField]: sortOrder,
-        },
-        skip,
-        take,
-      }),
-      prisma.item.count({ where }),
-    ])
+    const items = await prisma.item.findMany({
+      where,
+      include: {
+        figureCommon: true,
+        bandaiGunplaDetail: true,
+        liquidProductCommon: true,
+        paintDetail: true,
+      },
+      orderBy: {
+        [sortField]: sortOrder,
+      },
+      skip,
+      take,
+    })
+
+    const total = await prisma.item.count({ where })
 
     return {
       data: items.map(PrismaToElysiaItemMapper),
@@ -132,15 +131,7 @@ export const FetchItems = async (
   } catch (err) {
     console.error('Unexpected error:', err)
 
-    return {
-      data: [],
-      meta: {
-        page: 1,
-        limit: 10,
-        total: 0,
-        totalPages: 0,
-      },
-    }
+    throw err
   }
 }
 
