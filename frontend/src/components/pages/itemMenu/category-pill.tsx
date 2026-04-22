@@ -9,17 +9,17 @@ const CATEGORY_CONFIG: Record<
   Category,
   { c: string; bg: string; text: string }
 > = {
-  [Category.OTHER]: { c: 'gray.7', bg: 'gray.2', text: 'other' },
-  [Category.MODEL_KIT]: { c: 'blue.7', bg: 'blue.2', text: 'model kit' },
-  [Category.GUNPLA]: { c: 'cyan.7', bg: 'cyan.2', text: 'gunpla' },
-  [Category.FIGURE]: { c: 'green.7', bg: 'green.2', text: 'figure' },
-  [Category.TOOL]: { c: 'violet.7', bg: 'violet.2', text: 'tool' },
+  [Category.OTHER]: { c: 'gray.7', bg: 'gray.2', text: 'Other' },
+  [Category.MODEL_KIT]: { c: 'blue.7', bg: 'blue.2', text: 'Model Kit' },
+  [Category.GUNPLA]: { c: 'cyan.7', bg: 'cyan.2', text: 'Gunpla' },
+  [Category.FIGURE]: { c: 'green.7', bg: 'green.2', text: 'Figure' },
+  [Category.TOOL]: { c: 'violet.7', bg: 'violet.2', text: 'Tool' },
   [Category.LIQUID_PRODUCT]: {
     c: 'pink.7',
     bg: 'pink.2',
-    text: 'liquid product',
+    text: 'Liquid Product',
   },
-  [Category.PAINT]: { c: 'red.7', bg: 'red.2', text: 'paint' },
+  [Category.PAINT]: { c: 'red.7', bg: 'red.2', text: 'Paint' },
 }
 
 export function CategoryPill({ categoryId }: CategoryPillProps) {
