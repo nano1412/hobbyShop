@@ -68,9 +68,9 @@ export default function ItemManuPage() {
 
   const handleDelete = (id: string, name: string) => {
     modals.openConfirmModal({
-      title: 'delete item {name}?',
+      title: `Delete ${name}?`,
       centered: true,
-      labels: { confirm: 'Discard', cancel: 'Cancel' },
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onConfirm: async () => {
         await eden.api.items({ id }).delete()
@@ -87,12 +87,12 @@ export default function ItemManuPage() {
           <div className="flex justify-between mb-5">
             <div className="flex">
               <TextInput
-                className="mr-5"
                 placeholder="Search..."
                 key={form.key('search')}
                 {...form.getInputProps('search')}
               />
               <MultiSelect
+                className="mx-5"
                 placeholder="filter category"
                 data={[
                   { label: 'other', value: '1' },
@@ -112,9 +112,7 @@ export default function ItemManuPage() {
                   form.setFieldValue('categoryIds', values.join(','))
                 }}
               />
-              <Button className="mx-2" type="submit">
-                Search
-              </Button>
+              <Button type="submit">Search</Button>
             </div>
             <Button
               onClick={() => {
@@ -196,7 +194,6 @@ export default function ItemManuPage() {
               },
               { accessor: 'storePriceThb', sortable: true },
               { accessor: 'stockQty', sortable: true },
-              { accessor: 'updateAt', sortable: true },
               {
                 accessor: 'id',
                 title: 'Row actions',
@@ -214,6 +211,7 @@ export default function ItemManuPage() {
                     >
                       <IconEye stroke={2} />
                     </ActionIcon>
+
                     <ActionIcon
                       variant="transparent"
                       color="red"
