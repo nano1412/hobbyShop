@@ -11,7 +11,7 @@ import {
   Button,
   MultiSelect,
 } from '@mantine/core'
-import { IconEye, IconPhoto, IconTrash } from '@tabler/icons-react'
+import { IconEdit, IconEye, IconPhoto, IconTrash } from '@tabler/icons-react'
 import { QueryItemSchema, type queryItem } from '@/schema/QueryItemSchema'
 import { useForm } from '@mantine/form'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
@@ -211,7 +211,19 @@ export default function ItemManuPage() {
                     >
                       <IconEye stroke={2} />
                     </ActionIcon>
-
+                    <ActionIcon
+                      variant="transparent"
+                      color="green"
+                      aria-label="view"
+                      onClick={() => {
+                        //subject to change to edit later
+                        navigate({
+                          to: `/view-item/${item.id}`,
+                        })
+                      }}
+                    >
+                      <IconEdit stroke={2} />
+                    </ActionIcon>
                     <ActionIcon
                       variant="transparent"
                       color="red"
