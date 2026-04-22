@@ -1,14 +1,15 @@
 import Elysia, { t } from 'elysia'
 import { ItemModel } from './model'
-import { itemTemp } from './itemTemp'
-import { AddItem } from '@/scripts/addItem'
-import { getImageKitAuth } from '@/scripts/imagekit-uploadimg'
+import { AddItem } from '@/services/addItem.service'
+import { getImageKitAuth } from '@/services/imageKitGetAuth.service'
+import { FetchItems, FetchItemWithId } from '@/services/readItem.service'
+import { DeleteItemWithId } from '@/services/deleteItem.service'
 
 export const itemModule = new Elysia({
   name: 'module.items',
   prefix: '/api/items',
 })
-  .get('/:id', ({ params }) => itemTemp.testItem(params.id), {
+  .get('/:id', ({ params }) => FetchItemWithId(params.id), {
     detail: {
       tags: ['Item'],
       summary: 'Get Item by id',
@@ -17,15 +18,30 @@ export const itemModule = new Elysia({
       200: ItemModel,
     },
   })
-  .get('/', () => itemTemp.testItems(), {
-    detail: {
-      tags: ['Item'],
-      summary: 'Get Items list',
+  .get(
+    '/',
+    async ({ query }) => {
+      const result = await FetchItems(query)
+      return result
     },
-    response: {
-      200: t.Array(ItemModel),
+    {
+      detail: {
+        tags: ['Item'],
+        summary: 'Get Items list',
+      },
+      response: {
+        200: t.Object({
+          data: t.Array(ItemModel),
+          meta: t.Object({
+            page: t.Number(),
+            limit: t.Number(),
+            total: t.Number(),
+            totalPages: t.Number(),
+          }),
+        }),
+      },
     },
-  })
+  )
   .post(
     '/add',
     ({ body }) => {
@@ -39,6 +55,12 @@ export const itemModule = new Elysia({
       },
     },
   )
+  .delete('/:id', ({ params }) => DeleteItemWithId(params.id), {
+    detail: {
+      tags: ['Item'],
+      summary: 'Delete Item by id',
+    },
+  })
   .get(
     '/imgauth',
     async () => {
