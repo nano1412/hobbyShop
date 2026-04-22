@@ -10,13 +10,14 @@ import {
   TextInput,
   Button,
   MultiSelect,
-  Pill,
 } from '@mantine/core'
 import { IconEye, IconPhoto, IconTrash } from '@tabler/icons-react'
 import { QueryItemSchema, type queryItem } from '@/schema/QueryItemSchema'
 import { useForm } from '@mantine/form'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { CategoryPill } from './category-pill'
+import { modals } from '@mantine/modals'
+import { useNavigate } from '@tanstack/react-router'
 
 type itemsResponse = NonNullable<
   Awaited<ReturnType<typeof eden.api.items.get>>['data']
@@ -25,6 +26,7 @@ type itemsResponse = NonNullable<
 const PAGE_SIZES = [10, 15, 20]
 
 export default function ItemManuPage() {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [resultItems, setResultItems] = useState<itemsResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -64,43 +66,63 @@ export default function ItemManuPage() {
     setLoading(false)
   }
 
+  const handleDelete = (id: string, name: string) => {
+    modals.openConfirmModal({
+      title: 'delete item {name}?',
+      centered: true,
+      labels: { confirm: 'Discard', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: async () => {
+        await eden.api.items({ id }).delete()
+        await callItems({ ...form.values })
+      },
+    })
+  }
+
   return (
     <>
       <Header />
-      {/* <Pill c="blue">Blue pill</Pill>
-      <Pill bg="green">Red pill</Pill> */}
       <div className=" mx-20 p-5 ">
         <form onSubmit={form.onSubmit(callItems)}>
-          <div>
-            <TextInput
-              placeholder="Search..."
-              key={form.key('search')}
-              {...form.getInputProps('search')}
-            />
-            <MultiSelect
-              placeholder="filter category"
-              data={[
-                { label: 'other', value: '1' },
-                { label: 'model kit', value: '2' },
-                { label: 'gunpla', value: '3' },
-                { label: 'figure', value: '4' },
-                { label: 'tool', value: '5' },
-                { label: 'liquid product', value: '6' },
-                { label: 'paint', value: '7' },
-              ]}
-              value={
-                form.values.categoryIds
-                  ? form.values.categoryIds.split(',')
-                  : []
-              }
-              onChange={(values) => {
-                form.setFieldValue('categoryIds', values.join(','))
+          <div className="flex justify-between mb-5">
+            <div className="flex">
+              <TextInput
+                className="mr-5"
+                placeholder="Search..."
+                key={form.key('search')}
+                {...form.getInputProps('search')}
+              />
+              <MultiSelect
+                placeholder="filter category"
+                data={[
+                  { label: 'other', value: '1' },
+                  { label: 'model kit', value: '2' },
+                  { label: 'gunpla', value: '3' },
+                  { label: 'figure', value: '4' },
+                  { label: 'tool', value: '5' },
+                  { label: 'liquid product', value: '6' },
+                  { label: 'paint', value: '7' },
+                ]}
+                value={
+                  form.values.categoryIds
+                    ? form.values.categoryIds.split(',')
+                    : []
+                }
+                onChange={(values) => {
+                  form.setFieldValue('categoryIds', values.join(','))
+                }}
+              />
+              <Button className="mx-2" type="submit">
+                Search
+              </Button>
+            </div>
+            <Button
+              onClick={() => {
+                navigate({ to: '/add-item' })
               }}
-            />
-            <Button className="my-4" type="submit">
-              summit
+            >
+              + Create new Item
             </Button>
-            <Button>+ Create new Item</Button>
           </div>
 
           <DataTable
@@ -176,18 +198,29 @@ export default function ItemManuPage() {
               { accessor: 'stockQty', sortable: true },
               { accessor: 'updateAt', sortable: true },
               {
-                accessor: 'actions',
+                accessor: 'id',
                 title: 'Row actions',
                 textAlign: 'right',
                 render: (item) => (
                   <Group gap={4} justify="right" wrap="nowrap">
-                    <ActionIcon variant="transparent" aria-label="view">
+                    <ActionIcon
+                      variant="transparent"
+                      aria-label="view"
+                      onClick={() => {
+                        navigate({
+                          to: `/view-item/${item.id}`,
+                        })
+                      }}
+                    >
                       <IconEye stroke={2} />
                     </ActionIcon>
                     <ActionIcon
                       variant="transparent"
                       color="red"
                       aria-label="delete"
+                      onClick={() => {
+                        handleDelete(item.id, item.name)
+                      }}
                     >
                       <IconTrash stroke={2} />
                     </ActionIcon>
@@ -198,6 +231,11 @@ export default function ItemManuPage() {
             records={resultItems?.data}
           ></DataTable>
         </form>
+        {error ? (
+          <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {error}
+          </section>
+        ) : null}
       </div>
     </>
   )

@@ -84,7 +84,6 @@ export const FetchItems = async (
     const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt'
 
     const sortOrder = order === 'asc' ? 'asc' : 'desc'
-    console.log(sortOrder)
 
     // ---- filtering ----
     const where: Prisma.ItemWhereInput = {}

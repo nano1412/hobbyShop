@@ -33,6 +33,7 @@ import {
 import { useNavigate } from '@tanstack/react-router'
 import { modals } from '@mantine/modals'
 import { notifications } from '@mantine/notifications'
+
 export default function AddItem() {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()

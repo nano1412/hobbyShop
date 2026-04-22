@@ -3,6 +3,7 @@ import { ItemModel } from './model'
 import { AddItem } from '@/services/addItem.service'
 import { getImageKitAuth } from '@/services/imageKitGetAuth.service'
 import { FetchItems, FetchItemWithId } from '@/services/readItem.service'
+import { DeleteItemWithId } from '@/services/deleteItem.service'
 
 export const itemModule = new Elysia({
   name: 'module.items',
@@ -54,6 +55,12 @@ export const itemModule = new Elysia({
       },
     },
   )
+  .delete('/:id', ({ params }) => DeleteItemWithId(params.id), {
+    detail: {
+      tags: ['Item'],
+      summary: 'Delete Item by id',
+    },
+  })
   .get(
     '/imgauth',
     async () => {
