@@ -1,7 +1,7 @@
 import Elysia, { t } from 'elysia'
 import { ItemModel } from './model'
 import { AddItem } from '@/services/addItem.service'
-import { getImageKitAuth } from '@/services/imageKitGetAuth.service'
+import { getImageKitAuth } from '@/services/imageKit.service'
 import { FetchItems, FetchItemWithId } from '@/services/readItem.service'
 import { DeleteItemWithId } from '@/services/deleteItem.service'
 
