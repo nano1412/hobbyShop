@@ -8,3 +8,7 @@ const imagekit = new ImageKit({
 export const getImageKitAuth = () => {
   return imagekit.getAuthenticationParameters()
 }
+
+export async function deleteImage(fileId: string) {
+  return await imagekit.deleteFile(fileId)
+}
