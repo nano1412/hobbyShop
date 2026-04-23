@@ -15,6 +15,7 @@ import { Route as ItemMenuRouteImport } from './routes/item-menu'
 import { Route as ExampleNavRouteImport } from './routes/exampleNav'
 import { Route as AddItemRouteImport } from './routes/add-item'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ViewItemIdRouteImport } from './routes/view-item/$id'
 import { Route as ExampleSignupRouteImport } from './routes/example/signup'
 import { Route as ExampleSigninRouteImport } from './routes/example/signin'
 import { Route as ExampleFormRouteImport } from './routes/example/form'
@@ -49,6 +50,11 @@ const AddItemRoute = AddItemRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ViewItemIdRoute = ViewItemIdRouteImport.update({
+  id: '/view-item/$id',
+  path: '/view-item/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExampleSignupRoute = ExampleSignupRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/example/form': typeof ExampleFormRoute
   '/example/signin': typeof ExampleSigninRoute
   '/example/signup': typeof ExampleSignupRoute
+  '/view-item/$id': typeof ViewItemIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/example/form': typeof ExampleFormRoute
   '/example/signin': typeof ExampleSigninRoute
   '/example/signup': typeof ExampleSignupRoute
+  '/view-item/$id': typeof ViewItemIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/example/form': typeof ExampleFormRoute
   '/example/signin': typeof ExampleSigninRoute
   '/example/signup': typeof ExampleSignupRoute
+  '/view-item/$id': typeof ViewItemIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/example/form'
     | '/example/signin'
     | '/example/signup'
+    | '/view-item/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/example/form'
     | '/example/signin'
     | '/example/signup'
+    | '/view-item/$id'
   id:
     | '__root__'
     | '/'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/example/form'
     | '/example/signin'
     | '/example/signup'
+    | '/view-item/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,6 +183,7 @@ export interface RootRouteChildren {
   ExampleFormRoute: typeof ExampleFormRoute
   ExampleSigninRoute: typeof ExampleSigninRoute
   ExampleSignupRoute: typeof ExampleSignupRoute
+  ViewItemIdRoute: typeof ViewItemIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -215,6 +228,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/view-item/$id': {
+      id: '/view-item/$id'
+      path: '/view-item/$id'
+      fullPath: '/view-item/$id'
+      preLoaderRoute: typeof ViewItemIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/example/signup': {
@@ -267,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExampleFormRoute: ExampleFormRoute,
   ExampleSigninRoute: ExampleSigninRoute,
   ExampleSignupRoute: ExampleSignupRoute,
+  ViewItemIdRoute: ViewItemIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
