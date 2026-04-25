@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import DataWithLabel from './DataWithLabel'
 import { CategoryPill } from '../item-menu/CategoryPill'
 import { Button, Center, Image } from '@mantine/core'
-import { IconPhoto } from '@tabler/icons-react'
+import { IconPhotoOff } from '@tabler/icons-react'
 
 type itemResponse = NonNullable<
   Awaited<ReturnType<ReturnType<typeof eden.api.items>['get']>>['data']
@@ -141,9 +141,9 @@ export default function ViewItemUI() {
             </div>
             <div>
               {/* image */}
-              <div className="max-w-64 max-h-64 min-w-full min-h-3xs bg-gray-200 grid place-items-center overflow-hidden">
-                {resultItem.thumbnailPath ? (
-                  <Center className="h-50 w-80">
+              <div className=" min-w-full min-h-3xs grid place-items-center overflow-hidden">
+                <Center className="w-70 h-70 rounded-2xl border-2 border-dashed border-gray-400">
+                  {resultItem.thumbnailPath ? (
                     <Image
                       src={resultItem.thumbnailPath}
                       alt="thumbnail"
@@ -152,12 +152,10 @@ export default function ViewItemUI() {
                       radius="sm"
                       fit="cover"
                     />
-                  </Center>
-                ) : (
-                  <Center className="h-20 w-20">
-                    <IconPhoto size={80} stroke={1.5} />
-                  </Center>
-                )}
+                  ) : (
+                    <IconPhotoOff size={80} stroke={1.5} />
+                  )}
+                </Center>
               </div>
               <DataWithLabel
                 label="Description"
