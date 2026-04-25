@@ -15,7 +15,7 @@ import { IconEdit, IconEye, IconPhoto, IconTrash } from '@tabler/icons-react'
 import { QueryItemSchema, type queryItem } from '@/schema/QueryItemSchema'
 import { useForm } from '@mantine/form'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
-import { CategoryPill } from './category-pill'
+import { CategoryPill } from './CategoryPill'
 import { modals } from '@mantine/modals'
 import { useNavigate } from '@tanstack/react-router'
 
@@ -25,7 +25,7 @@ type itemsResponse = NonNullable<
 
 const PAGE_SIZES = [10, 15, 20]
 
-export default function ItemManuPage() {
+export default function ItemManuPageUI() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [resultItems, setResultItems] = useState<itemsResponse | null>(null)

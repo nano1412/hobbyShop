@@ -6,5 +6,5 @@ export const Route = createFileRoute('/exampleNav')({
 })
 
 function RouteComponent() {
-  return <HomeUiComponentsDemo></HomeUiComponentsDemo>
+  return <HomeUiComponentsDemo />
 }

@@ -1,10 +1,10 @@
-import ViewItem from '@/components/pages/viewItem/view-item'
+import ViewItemUI from '@/components/pages/view-item/ViewItem'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/view-item/$id')({
-  component: RouteComponent,
+  component: ViewItem,
 })
 
-function RouteComponent() {
-  return <ViewItem />
+function ViewItem() {
+  return <ViewItemUI />
 }
