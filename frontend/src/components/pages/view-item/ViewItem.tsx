@@ -264,10 +264,9 @@ export default function ViewItemUI() {
             </div>
           </div>
         </div>
-        <div>
+        <div className="flex justify-end">
           <Button
-            className="my-4 mr-5"
-            color="red"
+            className="my-4"
             onClick={() => {
               navigate({ to: '/item-menu' })
             }}
