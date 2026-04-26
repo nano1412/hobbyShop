@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestEdenRouteImport } from './routes/testEden'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as ItemMenuRouteImport } from './routes/item-menu'
 import { Route as ExampleNavRouteImport } from './routes/exampleNav'
@@ -22,11 +21,6 @@ import { Route as ExampleFormRouteImport } from './routes/example/form'
 import { Route as ExampleBackendRouteImport } from './routes/example/backend'
 import { Route as ExampleAuthenticatedRouteImport } from './routes/example/authenticated'
 
-const TestEdenRoute = TestEdenRouteImport.update({
-  id: '/testEden',
-  path: '/testEden',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
@@ -89,7 +83,6 @@ export interface FileRoutesByFullPath {
   '/exampleNav': typeof ExampleNavRoute
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
-  '/testEden': typeof TestEdenRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -103,7 +96,6 @@ export interface FileRoutesByTo {
   '/exampleNav': typeof ExampleNavRoute
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
-  '/testEden': typeof TestEdenRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -118,7 +110,6 @@ export interface FileRoutesById {
   '/exampleNav': typeof ExampleNavRoute
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
-  '/testEden': typeof TestEdenRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -134,7 +125,6 @@ export interface FileRouteTypes {
     | '/exampleNav'
     | '/item-menu'
     | '/not-found'
-    | '/testEden'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -148,7 +138,6 @@ export interface FileRouteTypes {
     | '/exampleNav'
     | '/item-menu'
     | '/not-found'
-    | '/testEden'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -162,7 +151,6 @@ export interface FileRouteTypes {
     | '/exampleNav'
     | '/item-menu'
     | '/not-found'
-    | '/testEden'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -177,7 +165,6 @@ export interface RootRouteChildren {
   ExampleNavRoute: typeof ExampleNavRoute
   ItemMenuRoute: typeof ItemMenuRoute
   NotFoundRoute: typeof NotFoundRoute
-  TestEdenRoute: typeof TestEdenRoute
   ExampleAuthenticatedRoute: typeof ExampleAuthenticatedRoute
   ExampleBackendRoute: typeof ExampleBackendRoute
   ExampleFormRoute: typeof ExampleFormRoute
@@ -188,13 +175,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/testEden': {
-      id: '/testEden'
-      path: '/testEden'
-      fullPath: '/testEden'
-      preLoaderRoute: typeof TestEdenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/not-found': {
       id: '/not-found'
       path: '/not-found'
@@ -281,7 +261,6 @@ const rootRouteChildren: RootRouteChildren = {
   ExampleNavRoute: ExampleNavRoute,
   ItemMenuRoute: ItemMenuRoute,
   NotFoundRoute: NotFoundRoute,
-  TestEdenRoute: TestEdenRoute,
   ExampleAuthenticatedRoute: ExampleAuthenticatedRoute,
   ExampleBackendRoute: ExampleBackendRoute,
   ExampleFormRoute: ExampleFormRoute,
