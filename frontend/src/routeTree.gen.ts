@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestEdenRouteImport } from './routes/testEden'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as ItemMenuRouteImport } from './routes/item-menu'
 import { Route as ExampleNavRouteImport } from './routes/exampleNav'
@@ -20,7 +21,13 @@ import { Route as ExampleSigninRouteImport } from './routes/example/signin'
 import { Route as ExampleFormRouteImport } from './routes/example/form'
 import { Route as ExampleBackendRouteImport } from './routes/example/backend'
 import { Route as ExampleAuthenticatedRouteImport } from './routes/example/authenticated'
+import { Route as EditItemIdRouteImport } from './routes/edit-item/$id'
 
+const TestEdenRoute = TestEdenRouteImport.update({
+  id: '/testEden',
+  path: '/testEden',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
@@ -76,6 +83,11 @@ const ExampleAuthenticatedRoute = ExampleAuthenticatedRouteImport.update({
   path: '/example/authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditItemIdRoute = EditItemIdRouteImport.update({
+  id: '/edit-item/$id',
+  path: '/edit-item/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,6 +95,8 @@ export interface FileRoutesByFullPath {
   '/exampleNav': typeof ExampleNavRoute
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
+  '/testEden': typeof TestEdenRoute
+  '/edit-item/$id': typeof EditItemIdRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -96,6 +110,8 @@ export interface FileRoutesByTo {
   '/exampleNav': typeof ExampleNavRoute
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
+  '/testEden': typeof TestEdenRoute
+  '/edit-item/$id': typeof EditItemIdRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -110,6 +126,8 @@ export interface FileRoutesById {
   '/exampleNav': typeof ExampleNavRoute
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
+  '/testEden': typeof TestEdenRoute
+  '/edit-item/$id': typeof EditItemIdRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -125,6 +143,8 @@ export interface FileRouteTypes {
     | '/exampleNav'
     | '/item-menu'
     | '/not-found'
+    | '/testEden'
+    | '/edit-item/$id'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -138,6 +158,8 @@ export interface FileRouteTypes {
     | '/exampleNav'
     | '/item-menu'
     | '/not-found'
+    | '/testEden'
+    | '/edit-item/$id'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -151,6 +173,8 @@ export interface FileRouteTypes {
     | '/exampleNav'
     | '/item-menu'
     | '/not-found'
+    | '/testEden'
+    | '/edit-item/$id'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -165,6 +189,8 @@ export interface RootRouteChildren {
   ExampleNavRoute: typeof ExampleNavRoute
   ItemMenuRoute: typeof ItemMenuRoute
   NotFoundRoute: typeof NotFoundRoute
+  TestEdenRoute: typeof TestEdenRoute
+  EditItemIdRoute: typeof EditItemIdRoute
   ExampleAuthenticatedRoute: typeof ExampleAuthenticatedRoute
   ExampleBackendRoute: typeof ExampleBackendRoute
   ExampleFormRoute: typeof ExampleFormRoute
@@ -175,6 +201,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/testEden': {
+      id: '/testEden'
+      path: '/testEden'
+      fullPath: '/testEden'
+      preLoaderRoute: typeof TestEdenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/not-found': {
       id: '/not-found'
       path: '/not-found'
@@ -252,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExampleAuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/edit-item/$id': {
+      id: '/edit-item/$id'
+      path: '/edit-item/$id'
+      fullPath: '/edit-item/$id'
+      preLoaderRoute: typeof EditItemIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -261,6 +301,8 @@ const rootRouteChildren: RootRouteChildren = {
   ExampleNavRoute: ExampleNavRoute,
   ItemMenuRoute: ItemMenuRoute,
   NotFoundRoute: NotFoundRoute,
+  TestEdenRoute: TestEdenRoute,
+  EditItemIdRoute: EditItemIdRoute,
   ExampleAuthenticatedRoute: ExampleAuthenticatedRoute,
   ExampleBackendRoute: ExampleBackendRoute,
   ExampleFormRoute: ExampleFormRoute,

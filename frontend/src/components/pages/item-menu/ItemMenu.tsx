@@ -18,10 +18,7 @@ import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { CategoryPill } from './CategoryPill'
 import { modals } from '@mantine/modals'
 import { useNavigate } from '@tanstack/react-router'
-
-type itemsResponse = NonNullable<
-  Awaited<ReturnType<typeof eden.api.items.get>>['data']
->
+import type { itemsResponse } from '@/scripts/type'
 
 const PAGE_SIZES = [10, 15, 20]
 
