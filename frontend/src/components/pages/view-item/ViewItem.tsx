@@ -7,10 +7,7 @@ import DataWithLabel from './DataWithLabel'
 import { CategoryPill } from '../item-menu/CategoryPill'
 import { Button, Center, Image } from '@mantine/core'
 import { IconPhotoOff } from '@tabler/icons-react'
-
-type itemResponse = NonNullable<
-  Awaited<ReturnType<ReturnType<typeof eden.api.items>['get']>>['data']
->
+import type { itemResponse } from '@/scripts/type'
 
 export default function ViewItemUI() {
   const navigate = useNavigate()
@@ -51,6 +48,15 @@ export default function ViewItemUI() {
     }
 
     setResultItem(data)
+    const createdUsername = await eden
+      .user({ id: data.createdBy })
+      .username.get()
+    const updatedUsername = await eden
+      .user({ id: data.updatedBy })
+      .username.get()
+    setCreatedItemUser(createdUsername.data)
+    setUpdatedItemUser(updatedUsername.data)
+
     setLoading(false)
   }
 
@@ -73,20 +79,8 @@ export default function ViewItemUI() {
     return false
   }
 
-  const getUserName = async () => {
-    const createdUsername = await eden
-      .user({ id: resultItem.createdBy })
-      .username.get()
-    const updatedUsername = await eden
-      .user({ id: resultItem.updatedBy })
-      .username.get()
-    setCreatedItemUser(createdUsername.data)
-    setUpdatedItemUser(updatedUsername.data)
-  }
-
   useEffect(() => {
     callItem()
-    getUserName()
   }, [])
 
   return (

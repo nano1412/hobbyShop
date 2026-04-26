@@ -21,6 +21,7 @@ import { Route as ExampleSigninRouteImport } from './routes/example/signin'
 import { Route as ExampleFormRouteImport } from './routes/example/form'
 import { Route as ExampleBackendRouteImport } from './routes/example/backend'
 import { Route as ExampleAuthenticatedRouteImport } from './routes/example/authenticated'
+import { Route as EditItemIdRouteImport } from './routes/edit-item/$id'
 
 const TestEdenRoute = TestEdenRouteImport.update({
   id: '/testEden',
@@ -82,6 +83,11 @@ const ExampleAuthenticatedRoute = ExampleAuthenticatedRouteImport.update({
   path: '/example/authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditItemIdRoute = EditItemIdRouteImport.update({
+  id: '/edit-item/$id',
+  path: '/edit-item/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
   '/testEden': typeof TestEdenRoute
+  '/edit-item/$id': typeof EditItemIdRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
   '/testEden': typeof TestEdenRoute
+  '/edit-item/$id': typeof EditItemIdRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
   '/testEden': typeof TestEdenRoute
+  '/edit-item/$id': typeof EditItemIdRoute
   '/example/authenticated': typeof ExampleAuthenticatedRoute
   '/example/backend': typeof ExampleBackendRoute
   '/example/form': typeof ExampleFormRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/item-menu'
     | '/not-found'
     | '/testEden'
+    | '/edit-item/$id'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/item-menu'
     | '/not-found'
     | '/testEden'
+    | '/edit-item/$id'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/item-menu'
     | '/not-found'
     | '/testEden'
+    | '/edit-item/$id'
     | '/example/authenticated'
     | '/example/backend'
     | '/example/form'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   ItemMenuRoute: typeof ItemMenuRoute
   NotFoundRoute: typeof NotFoundRoute
   TestEdenRoute: typeof TestEdenRoute
+  EditItemIdRoute: typeof EditItemIdRoute
   ExampleAuthenticatedRoute: typeof ExampleAuthenticatedRoute
   ExampleBackendRoute: typeof ExampleBackendRoute
   ExampleFormRoute: typeof ExampleFormRoute
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExampleAuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/edit-item/$id': {
+      id: '/edit-item/$id'
+      path: '/edit-item/$id'
+      fullPath: '/edit-item/$id'
+      preLoaderRoute: typeof EditItemIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   ItemMenuRoute: ItemMenuRoute,
   NotFoundRoute: NotFoundRoute,
   TestEdenRoute: TestEdenRoute,
+  EditItemIdRoute: EditItemIdRoute,
   ExampleAuthenticatedRoute: ExampleAuthenticatedRoute,
   ExampleBackendRoute: ExampleBackendRoute,
   ExampleFormRoute: ExampleFormRoute,
