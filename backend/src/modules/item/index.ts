@@ -88,10 +88,3 @@ export const itemModule = new Elysia({
       },
     },
   )
-
-// get all items (item menu) / OK
-// get item with id /:id OK
-// add item /add OK
-// delete item /delete/:id OK
-// edit item /edit/:id
-// get imageupload permission auth /imgauth OK
