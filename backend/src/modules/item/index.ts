@@ -1,15 +1,19 @@
 import Elysia, { t } from 'elysia'
 import { ItemModel } from './model'
-import { AddItem } from '@/services/addItem.service'
+import {
+  AddItem,
+  DeleteItemWithId,
+  FetchItems,
+  FetchItemWithId,
+  UpdateItem,
+} from '@/services/item.service'
 import { getImageKitAuth } from '@/services/imageKit.service'
-import { FetchItems, FetchItemWithId } from '@/services/readItem.service'
-import { DeleteItemWithId } from '@/services/deleteItem.service'
 
 export const itemModule = new Elysia({
   name: 'module.items',
   prefix: '/api/items',
 })
-  .get('/:id', ({ params }) => FetchItemWithId(params.id), {
+  .get('/:id', ({ params }) => FetchItemWithId(Number(params.id)), {
     detail: {
       tags: ['Item'],
       summary: 'Get Item by id',
@@ -55,10 +59,17 @@ export const itemModule = new Elysia({
       },
     },
   )
-  .delete('/:id', ({ params }) => DeleteItemWithId(params.id), {
+  .delete('/:id', ({ params }) => DeleteItemWithId(Number(params.id)), {
     detail: {
       tags: ['Item'],
       summary: 'Delete Item by id',
+    },
+  })
+  .put('/:id', ({ params, body }) => UpdateItem(Number(params.id), body), {
+    body: ItemModel,
+    detail: {
+      tags: ['Item'],
+      summary: 'edit item',
     },
   })
   .get(
@@ -81,6 +92,6 @@ export const itemModule = new Elysia({
 // get all items (item menu) / OK
 // get item with id /:id OK
 // add item /add OK
-// delete item /delete/:id
+// delete item /delete/:id OK
 // edit item /edit/:id
-// get imageupload permission auth /imgauth
+// get imageupload permission auth /imgauth OK
