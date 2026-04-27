@@ -16,7 +16,6 @@ const optionalNumeric = t.Optional(t.Numeric())
 
 export const ItemModel = t.Object({
   userId: optionalString,
-  id: optionalNumeric,
   categoryId: t.Numeric(),
   name: t.String(),
   description: optionalString,
