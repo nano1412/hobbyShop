@@ -1,10 +1,10 @@
-import AddItem from '@/components/pages/addItem/main-form'
+import AddItemPageUI from '@/components/pages/add-item/MainForm'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/add-item')({
-  component: RouteComponent,
+  component: AddItemPage,
 })
 
-function RouteComponent() {
-  return <AddItem />
+function AddItemPage() {
+  return <AddItemPageUI />
 }
