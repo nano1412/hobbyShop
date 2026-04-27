@@ -262,7 +262,7 @@ export default function ViewItemUI() {
             <Button
               className="my-4"
               onClick={() => {
-                navigate({ to: '/item-menu' })
+                navigate({ to: '/' })
               }}
             >
               back to item menu

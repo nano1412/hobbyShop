@@ -25,7 +25,7 @@ export default function Header() {
       <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4 text-left">
         <h1
           className="text-2xl font-bold cursor-pointer"
-          onClick={() => navigate({ to: '/item-menu' })}
+          onClick={() => navigate({ to: '/' })}
         >
           Hobby Shop
         </h1>

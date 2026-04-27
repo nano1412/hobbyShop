@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as NotFoundRouteImport } from './routes/not-found'
-import { Route as ItemMenuRouteImport } from './routes/item-menu'
 import { Route as AddItemRouteImport } from './routes/add-item'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewItemIdRouteImport } from './routes/view-item/$id'
@@ -21,11 +20,6 @@ import { Route as EditItemIdRouteImport } from './routes/edit-item/$id'
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ItemMenuRoute = ItemMenuRouteImport.update({
-  id: '/item-menu',
-  path: '/item-menu',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AddItemRoute = AddItemRouteImport.update({
@@ -62,7 +56,6 @@ const EditItemIdRoute = EditItemIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add-item': typeof AddItemRoute
-  '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
   '/edit-item/$id': typeof EditItemIdRoute
   '/example/signin': typeof ExampleSigninRoute
@@ -72,7 +65,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add-item': typeof AddItemRoute
-  '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
   '/edit-item/$id': typeof EditItemIdRoute
   '/example/signin': typeof ExampleSigninRoute
@@ -83,7 +75,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/add-item': typeof AddItemRoute
-  '/item-menu': typeof ItemMenuRoute
   '/not-found': typeof NotFoundRoute
   '/edit-item/$id': typeof EditItemIdRoute
   '/example/signin': typeof ExampleSigninRoute
@@ -95,7 +86,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/add-item'
-    | '/item-menu'
     | '/not-found'
     | '/edit-item/$id'
     | '/example/signin'
@@ -105,7 +95,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/add-item'
-    | '/item-menu'
     | '/not-found'
     | '/edit-item/$id'
     | '/example/signin'
@@ -115,7 +104,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/add-item'
-    | '/item-menu'
     | '/not-found'
     | '/edit-item/$id'
     | '/example/signin'
@@ -126,7 +114,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddItemRoute: typeof AddItemRoute
-  ItemMenuRoute: typeof ItemMenuRoute
   NotFoundRoute: typeof NotFoundRoute
   EditItemIdRoute: typeof EditItemIdRoute
   ExampleSigninRoute: typeof ExampleSigninRoute
@@ -141,13 +128,6 @@ declare module '@tanstack/react-router' {
       path: '/not-found'
       fullPath: '/not-found'
       preLoaderRoute: typeof NotFoundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/item-menu': {
-      id: '/item-menu'
-      path: '/item-menu'
-      fullPath: '/item-menu'
-      preLoaderRoute: typeof ItemMenuRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/add-item': {
@@ -198,7 +178,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddItemRoute: AddItemRoute,
-  ItemMenuRoute: ItemMenuRoute,
   NotFoundRoute: NotFoundRoute,
   EditItemIdRoute: EditItemIdRoute,
   ExampleSigninRoute: ExampleSigninRoute,

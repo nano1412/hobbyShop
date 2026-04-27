@@ -1,13 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-// import HomeUiComponentsDemo from '@/components/pages/home/HomeUiComponentsDemo'
-import Header from '@/components/common/Header'
+import ItemManuPageUI from '@/components/pages/item-menu/ItemMenu'
 
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
-  return (
-    <>
-      <Header />
-    </>
-  )
+  return <ItemManuPageUI />
 }

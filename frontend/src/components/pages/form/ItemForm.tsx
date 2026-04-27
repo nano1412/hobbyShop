@@ -190,7 +190,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
       labels: { confirm: 'Discard', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onConfirm: () => {
-        navigate({ to: '/item-menu' })
+        navigate({ to: '/' })
       },
     })
   }
@@ -238,7 +238,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
               title: 'Success!',
               message: 'Edit item success',
             })
-            navigate({ to: '/item-menu' })
+            navigate({ to: '/' })
           }
         } catch (err) {
           console.error(err)
@@ -282,7 +282,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
             return
           }
           notifications.show({ title: 'Success!', message: 'Add item success' })
-          navigate({ to: '/item-menu' })
+          navigate({ to: '/' })
         } catch (err) {
           console.error(err)
           notifications.show({
