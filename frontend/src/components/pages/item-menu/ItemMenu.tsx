@@ -60,6 +60,7 @@ export default function ItemManuPageUI() {
     }
 
     setResultItems(data)
+    console.log(data)
     setLoading(false)
   }
 
@@ -201,6 +202,8 @@ export default function ItemManuPageUI() {
                       variant="transparent"
                       aria-label="view"
                       onClick={() => {
+                        console.log('item')
+                        console.log(item)
                         navigate({
                           to: `/view-item/${item.id}`,
                         })
@@ -213,9 +216,8 @@ export default function ItemManuPageUI() {
                       color="green"
                       aria-label="view"
                       onClick={() => {
-                        //subject to change to edit later
                         navigate({
-                          to: `/view-item/${item.id}`,
+                          to: `/edit-item/${item.id}`,
                         })
                       }}
                     >
