@@ -1,5 +1,5 @@
 import prisma from '@/lib/db'
-import { Prisma } from '../../generated/prisma/client'
+import { GunplaExclusivity, Prisma } from '../../generated/prisma/client'
 import { deleteImage } from './imageKit.service'
 import { ResponseItem } from '@/modules/item/model/responseItem.model'
 import { EditItem } from '@/modules/item/model/editItem.model'
@@ -49,81 +49,80 @@ const PrismaToElysiaItemMapper = (data: ItemWithRelations): ResponseItem => {
 
 export const CreateItem = async (data: AddItem) => {
   try {
-    await prisma.item.create({
-      data: {
-        categoryId: data.categoryId ? Number(data.categoryId) : 1,
-        name: data.name,
-        description: data.description,
-        thumbnailPath: data.thumbnailPath,
-        thumbnailId: data.thumbnailId,
-        brand: data.brand,
-        stockQty: data.stockQty,
-        storePriceThb: data.storePriceThb,
-        msrpPrice: data.msrpPrice,
-        msrpCurrency: data.msrpCurrency,
-        releaseYear: data.releaseYear,
-        createdBy: data.userId ?? null,
-        updatedBy: data.userId ?? null,
-        updatedAt: new Date(),
+    await prisma.$transaction(async (prismaTransaction) => {
+      const createItemPrisma = await prismaTransaction.item.create({
+        data: {
+          categoryId: data.categoryId ? Number(data.categoryId) : 1,
+          name: data.name,
+          description: data.description,
+          thumbnailPath: data.thumbnailPath,
+          thumbnailId: data.thumbnailId,
+          brand: data.brand,
+          stockQty: data.stockQty,
+          storePriceThb: data.storePriceThb,
+          msrpPrice: data.msrpPrice,
+          msrpCurrency: data.msrpCurrency,
+          releaseYear: data.releaseYear,
+          createdBy: data.userId ?? null,
+          updatedBy: data.userId ?? null,
+          updatedAt: new Date(),
+        },
+      })
+      // FigureCommon
+      if (data.fromSerie || data.height) {
+        await prismaTransaction.figureCommon.create({
+          data: {
+            fromSerie: data.fromSerie ?? undefined,
+            heightCm: data.height ?? undefined,
+            itemId: createItemPrisma.id,
+          },
+        })
+      }
 
-        // FigureCommon
-        ...(data.fromSerie || data.height
-          ? {
-              figureCommon: {
-                create: {
-                  fromSerie: data.fromSerie ?? undefined,
-                  heightCm: data.height ?? undefined,
-                },
-              },
-            }
-          : {}),
+      // BandaiGunplaDetail
+      if (data.gunplaGrade || data.gunplaExclusivity) {
+        await prismaTransaction.bandaiGunplaDetail.create({
+          data: {
+            grade: data.gunplaGrade ?? 'other',
+            GunplaExclusivity: data.gunplaExclusivity ?? 'none',
+            itemId: createItemPrisma.id,
+          },
+        })
+      }
 
-        // BandaiGunplaDetail
-        ...(data.gunplaGrade || data.gunplaExclusivity
-          ? {
-              bandaiGunplaDetail: {
-                create: {
-                  grade: data.gunplaGrade ?? 'other', // default enum
-                  exclusivity: data.gunplaExclusivity ?? 'none', // default enum
-                },
-              },
-            }
-          : {}),
+      // LiquidProductCommon
+      if (data.liquidProductType || data.resinType || data.volumeMl) {
+        await prismaTransaction.liquidProductCommon.create({
+          data: {
+            liquidProductType: data.liquidProductType ?? 'other',
+            resinType: data.resinType ?? undefined,
+            volumeMl: data.volumeMl ?? 0,
+            itemId: createItemPrisma.id,
+          },
+        })
+      }
 
-        // LiquidProductCommon
-        ...(data.liquidProductType || data.resinType || data.volumeMl
-          ? {
-              liquidProductCommon: {
-                create: {
-                  liquidProductType: data.liquidProductType ?? 'other',
-                  resinType: data.resinType ?? undefined,
-                  volumeMl: data.volumeMl ?? 0,
-                },
-              },
-            }
-          : {}),
-
-        // PaintDetail
-        ...(data.colorTone ||
+      // PaintDetail
+      if (
+        data.colorTone ||
         data.paintSpecialPorperty ||
         data.paintApplicationMethod ||
         data.paintFinish
-          ? {
-              paintDetail: {
-                create: {
-                  colorTone: data.colorTone ?? 'other',
-                  paintSpecialPorperty: data.paintSpecialPorperty ?? undefined,
-                  paintApplicationMethod:
-                    data.paintApplicationMethod ?? 'other',
-                  paintFinish: data.paintFinish ?? undefined,
-                },
-              },
-            }
-          : {}),
-      },
+      ) {
+        await prismaTransaction.paintDetail.create({
+          data: {
+            colorTone: data.colorTone ?? 'other',
+            paintSpecialPorperty: data.paintSpecialPorperty ?? undefined,
+            paintApplicationMethod: data.paintApplicationMethod ?? 'other',
+            paintFinish: data.paintFinish ?? undefined,
+            itemId: createItemPrisma.id,
+          },
+        })
+      }
     })
   } catch (err) {
     console.error('Unexpected error:', err)
+    throw err
   }
 }
 
@@ -241,18 +240,18 @@ export const DeleteItemWithId = async (id: number) => {
   try {
     const itemToDelete = await FetchItemWithId(id)
     if (itemToDelete.thumbnailId) {
-      try {
-        await deleteImage(itemToDelete.thumbnailId)
-      } catch (err) {
-        console.error('Failed to delete image:', err)
-      }
+      await deleteImage(itemToDelete.thumbnailId)
     }
-    await prisma.item.delete({
-      where: { id: Number(id) },
+    await prisma.$transaction(async (prismaTransaction) => {
+      await prismaTransaction.item.delete({
+        where: { id: Number(id) },
+      })
     })
+
     console.log('Deleted item with id', id)
   } catch (err) {
     console.error('Unexpected error:', err)
+    throw err
   }
 }
 
@@ -260,118 +259,106 @@ export const UpdateItem = async (id: number, data: EditItem) => {
   try {
     const itemToEdit = await FetchItemWithId(id)
     if (itemToEdit.thumbnailId && data.thumbnailId != itemToEdit.thumbnailId) {
-      try {
-        await deleteImage(itemToEdit.thumbnailId)
-      } catch (err) {
-        console.error('Failed to delete image:', err)
-      }
+      await deleteImage(itemToEdit.thumbnailId)
     }
+    await prisma.$transaction(async (prismaTransaction) => {
+      const updateItemPrisma = await prismaTransaction.item.update({
+        where: { id },
 
-    await prisma.item.update({
-      where: { id },
+        data: {
+          categoryId: data.categoryId ? Number(data.categoryId) : undefined,
+          name: data.name,
+          description: data.description,
+          thumbnailPath: data.thumbnailPath,
+          thumbnailId: data.thumbnailId,
+          brand: data.brand,
+          stockQty: data.stockQty,
+          storePriceThb: data.storePriceThb,
+          msrpPrice: data.msrpPrice,
+          msrpCurrency: data.msrpCurrency,
+          releaseYear: data.releaseYear,
+          updatedBy: data.userId ?? null,
+          updatedAt: new Date(),
+        },
+      })
 
-      data: {
-        categoryId: data.categoryId ? Number(data.categoryId) : undefined,
-        name: data.name,
-        description: data.description,
-        thumbnailPath: data.thumbnailPath,
-        thumbnailId: data.thumbnailId,
-        brand: data.brand,
-        stockQty: data.stockQty,
-        storePriceThb: data.storePriceThb,
-        msrpPrice: data.msrpPrice,
-        msrpCurrency: data.msrpCurrency,
-        releaseYear: data.releaseYear,
-        updatedBy: data.userId ?? null,
-        updatedAt: new Date(),
+      // FigureCommon
+      if (data.fromSerie || data.height) {
+        await prismaTransaction.figureCommon.upsert({
+          where: { itemId: updateItemPrisma.id },
+          create: {
+            fromSerie: data.fromSerie ?? undefined,
+            heightCm: data.height ?? undefined,
+            itemId: updateItemPrisma.id,
+          },
+          update: {
+            fromSerie: data.fromSerie ?? undefined,
+            heightCm: data.height ?? undefined,
+          },
+        })
+      }
 
-        // FigureCommon
-        ...(data.fromSerie || data.height
-          ? {
-              figureCommon: {
-                upsert: {
-                  create: {
-                    fromSerie: data.fromSerie ?? undefined,
-                    heightCm: data.height ?? undefined,
-                  },
-                  update: {
-                    fromSerie: data.fromSerie ?? undefined,
-                    heightCm: data.height ?? undefined,
-                  },
-                },
-              },
-            }
-          : {}),
+      // BandaiGunplaDetail
+      if (data.gunplaGrade || data.gunplaExclusivity) {
+        await prismaTransaction.bandaiGunplaDetail.upsert({
+          where: { itemId: updateItemPrisma.id },
+          create: {
+            grade: data.gunplaGrade ?? 'other',
+            GunplaExclusivity: data.gunplaExclusivity ?? 'none',
+            itemId: updateItemPrisma.id,
+          },
+          update: {
+            grade: data.gunplaGrade ?? 'other',
+            GunplaExclusivity: data.gunplaExclusivity ?? 'none',
+          },
+        })
+      }
 
-        // BandaiGunplaDetail
-        ...(data.gunplaGrade || data.gunplaExclusivity
-          ? {
-              bandaiGunplaDetail: {
-                upsert: {
-                  create: {
-                    grade: data.gunplaGrade ?? 'other',
-                    exclusivity: data.gunplaExclusivity ?? 'none',
-                  },
-                  update: {
-                    grade: data.gunplaGrade ?? 'other',
-                    exclusivity: data.gunplaExclusivity ?? 'none',
-                  },
-                },
-              },
-            }
-          : {}),
+      // LiquidProductCommon
+      if (data.liquidProductType || data.resinType || data.volumeMl) {
+        await prismaTransaction.liquidProductCommon.upsert({
+          where: { itemId: updateItemPrisma.id },
+          create: {
+            liquidProductType: data.liquidProductType ?? 'other',
+            resinType: data.resinType ?? undefined,
+            volumeMl: data.volumeMl ?? 0,
+            itemId: updateItemPrisma.id,
+          },
+          update: {
+            liquidProductType: data.liquidProductType ?? 'other',
+            resinType: data.resinType ?? undefined,
+            volumeMl: data.volumeMl ?? 0,
+          },
+        })
+      }
 
-        // LiquidProductCommon
-        ...(data.liquidProductType || data.resinType || data.volumeMl
-          ? {
-              liquidProductCommon: {
-                upsert: {
-                  create: {
-                    liquidProductType: data.liquidProductType ?? 'other',
-                    resinType: data.resinType ?? undefined,
-                    volumeMl: data.volumeMl ?? 0,
-                  },
-                  update: {
-                    liquidProductType: data.liquidProductType ?? 'other',
-                    resinType: data.resinType ?? undefined,
-                    volumeMl: data.volumeMl ?? 0,
-                  },
-                },
-              },
-            }
-          : {}),
-
-        // PaintDetail
-        ...(data.colorTone ||
+      // PaintDetail
+      if (
+        data.colorTone ||
         data.paintSpecialPorperty ||
         data.paintApplicationMethod ||
         data.paintFinish
-          ? {
-              paintDetail: {
-                upsert: {
-                  create: {
-                    colorTone: data.colorTone ?? 'other',
-                    paintSpecialPorperty:
-                      data.paintSpecialPorperty ?? undefined,
-                    paintApplicationMethod:
-                      data.paintApplicationMethod ?? 'other',
-                    paintFinish: data.paintFinish ?? undefined,
-                  },
-                  update: {
-                    colorTone: data.colorTone ?? 'other',
-                    paintSpecialPorperty:
-                      data.paintSpecialPorperty ?? undefined,
-                    paintApplicationMethod:
-                      data.paintApplicationMethod ?? 'other',
-                    paintFinish: data.paintFinish ?? undefined,
-                  },
-                },
-              },
-            }
-          : {}),
-      },
+      ) {
+        await prismaTransaction.paintDetail.upsert({
+          where: { itemId: updateItemPrisma.id },
+          create: {
+            colorTone: data.colorTone ?? 'other',
+            paintSpecialPorperty: data.paintSpecialPorperty ?? undefined,
+            paintApplicationMethod: data.paintApplicationMethod ?? 'other',
+            paintFinish: data.paintFinish ?? undefined,
+            itemId: updateItemPrisma.id,
+          },
+          update: {
+            colorTone: data.colorTone ?? 'other',
+            paintSpecialPorperty: data.paintSpecialPorperty ?? undefined,
+            paintApplicationMethod: data.paintApplicationMethod ?? 'other',
+            paintFinish: data.paintFinish ?? undefined,
+          },
+        })
+      }
     })
   } catch (err) {
     console.error('Unexpected error:', err)
+    throw err
   }
 }
