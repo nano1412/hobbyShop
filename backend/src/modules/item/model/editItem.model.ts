@@ -10,9 +10,7 @@ import {
   ResinType,
   Currency,
 } from '../../../../generated/prisma/client'
-
-const optionalString = t.Optional(t.String())
-const optionalNumeric = t.Optional(t.Numeric())
+import { optionalNumeric, optionalString } from '@/utils/elysiaTypeUtil'
 
 export const EditItemModel = t.Object({
   userId: optionalString,
