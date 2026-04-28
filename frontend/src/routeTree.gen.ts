@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as AddItemRouteImport } from './routes/add-item'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +19,16 @@ import { Route as ExampleSignupRouteImport } from './routes/example/signup'
 import { Route as ExampleSigninRouteImport } from './routes/example/signin'
 import { Route as EditItemIdRouteImport } from './routes/edit-item/$id'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
@@ -57,6 +69,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add-item': typeof AddItemRoute
   '/not-found': typeof NotFoundRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/edit-item/$id': typeof EditItemIdRoute
   '/example/signin': typeof ExampleSigninRoute
   '/example/signup': typeof ExampleSignupRoute
@@ -66,6 +80,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add-item': typeof AddItemRoute
   '/not-found': typeof NotFoundRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/edit-item/$id': typeof EditItemIdRoute
   '/example/signin': typeof ExampleSigninRoute
   '/example/signup': typeof ExampleSignupRoute
@@ -76,6 +92,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/add-item': typeof AddItemRoute
   '/not-found': typeof NotFoundRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/edit-item/$id': typeof EditItemIdRoute
   '/example/signin': typeof ExampleSigninRoute
   '/example/signup': typeof ExampleSignupRoute
@@ -87,6 +105,8 @@ export interface FileRouteTypes {
     | '/'
     | '/add-item'
     | '/not-found'
+    | '/signin'
+    | '/signup'
     | '/edit-item/$id'
     | '/example/signin'
     | '/example/signup'
@@ -96,6 +116,8 @@ export interface FileRouteTypes {
     | '/'
     | '/add-item'
     | '/not-found'
+    | '/signin'
+    | '/signup'
     | '/edit-item/$id'
     | '/example/signin'
     | '/example/signup'
@@ -105,6 +127,8 @@ export interface FileRouteTypes {
     | '/'
     | '/add-item'
     | '/not-found'
+    | '/signin'
+    | '/signup'
     | '/edit-item/$id'
     | '/example/signin'
     | '/example/signup'
@@ -115,6 +139,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddItemRoute: typeof AddItemRoute
   NotFoundRoute: typeof NotFoundRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
   EditItemIdRoute: typeof EditItemIdRoute
   ExampleSigninRoute: typeof ExampleSigninRoute
   ExampleSignupRoute: typeof ExampleSignupRoute
@@ -123,6 +149,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/not-found': {
       id: '/not-found'
       path: '/not-found'
@@ -179,6 +219,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddItemRoute: AddItemRoute,
   NotFoundRoute: NotFoundRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
   EditItemIdRoute: EditItemIdRoute,
   ExampleSigninRoute: ExampleSigninRoute,
   ExampleSignupRoute: ExampleSignupRoute,

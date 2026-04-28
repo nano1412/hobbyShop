@@ -30,17 +30,15 @@ export default function Header() {
           Hobby Shop
         </h1>
       </nav>
-      {!!session && (
+      {session ? (
         <div className="flex items-center text-right">
           <div className="mx-5">{session.user?.name}</div>
 
-          <Button
-            onClick={() => {
-              handleSignOut()
-            }}
-          >
-            Signout
-          </Button>
+          <Button onClick={handleSignOut}>Signout</Button>
+        </div>
+      ) : (
+        <div className="flex items-center text-right">
+          <Button onClick={() => navigate({ to: '/signin' })}>Sign in</Button>
         </div>
       )}
     </header>
