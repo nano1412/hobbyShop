@@ -250,6 +250,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
               return
             }
             notifications.show({
+              color: 'green',
               title: 'Success!',
               message: 'Edit item success',
             })
@@ -297,7 +298,11 @@ export default function ItemForm({ itemid }: ItemFormProps) {
             })
             return
           }
-          notifications.show({ title: 'Success!', message: 'Add item success' })
+          notifications.show({
+            color: 'green',
+            title: 'Success!',
+            message: 'Add item success',
+          })
           navigate({ to: '/' })
         } catch (err) {
           console.error(err)

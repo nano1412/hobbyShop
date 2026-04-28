@@ -11,7 +11,7 @@ import {
   Button,
   MultiSelect,
 } from '@mantine/core'
-import { IconEdit, IconEye, IconPhoto, IconTrash } from '@tabler/icons-react'
+import { IconEdit, IconEye, IconPhotoOff, IconTrash } from '@tabler/icons-react'
 import { useForm } from '@mantine/form'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { CategoryPill } from './CategoryPill'
@@ -179,7 +179,7 @@ export default function ItemManuPageUI() {
                     </Center>
                   ) : (
                     <Center className="h-20 w-20">
-                      <IconPhoto size={40} stroke={1.5} />
+                      <IconPhotoOff size={40} stroke={1.5} />
                     </Center>
                   ),
               },

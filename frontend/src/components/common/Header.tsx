@@ -8,7 +8,11 @@ export default function Header() {
   const handleSignOut = async () => {
     try {
       await authClient.signOut()
-      notifications.show({ title: 'Success!', message: 'Logout success' })
+      notifications.show({
+        color: 'green',
+        title: 'Success!',
+        message: 'Logout success',
+      })
       //redirect to login
     } catch (error) {
       notifications.show({
