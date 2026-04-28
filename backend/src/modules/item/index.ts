@@ -27,7 +27,17 @@ export const itemModule = new Elysia({
   .get(
     '/',
     async ({ query }) => {
-      const result = await FetchItems(query)
+      const processedQuery: ItemQuery = {
+        page: query.page ? parseInt(query.page) : undefined,
+        limit: query.limit ? parseInt(query.limit) : undefined,
+        search: query.search,
+        sort: query.sort,
+        order: query.order,
+        categoryIds: query.categoryIds
+          ? query.categoryIds.split(',').map((id) => Number(id))
+          : undefined,
+      }
+      const result = await FetchItems(processedQuery)
       return result
     },
     {
