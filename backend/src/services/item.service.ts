@@ -1,7 +1,9 @@
 import prisma from '@/lib/db'
-import { Item } from '@/modules/item/model'
 import { Prisma } from '../../generated/prisma/client'
 import { deleteImage } from './imageKit.service'
+import { ResponseItem } from '@/modules/item/model/responseItem.model'
+import { EditItem } from '@/modules/item/model/editItem.model'
+import { AddItem } from '@/modules/item/model/addItem.model'
 
 type ItemWithRelations = Prisma.ItemGetPayload<{
   include: {
@@ -12,9 +14,10 @@ type ItemWithRelations = Prisma.ItemGetPayload<{
   }
 }>
 
-const PrismaToElysiaItemMapper = (data: ItemWithRelations): Item => {
+const PrismaToElysiaItemMapper = (data: ItemWithRelations): ResponseItem => {
   return {
     ...data,
+    id: data.id ? data.id.toString() : '',
     description: data.description ?? undefined,
     thumbnailPath: data.thumbnailPath ?? undefined,
     thumbnailId: data.thumbnailId ?? undefined,
@@ -44,7 +47,7 @@ const PrismaToElysiaItemMapper = (data: ItemWithRelations): Item => {
   }
 }
 
-export const AddItem = async (data: Item) => {
+export const CreateItem = async (data: AddItem) => {
   try {
     await prisma.item.create({
       data: {
@@ -127,7 +130,7 @@ export const AddItem = async (data: Item) => {
 export const FetchItems = async (
   query: ItemQuery,
 ): Promise<{
-  data: Item[]
+  data: ResponseItem[]
   meta: {
     page: number
     limit: number
@@ -215,7 +218,7 @@ export const FetchItems = async (
   }
 }
 
-export const FetchItemWithId = async (id: number): Promise<Item> => {
+export const FetchItemWithId = async (id: number): Promise<ResponseItem> => {
   try {
     const rawItem = await prisma.item.findUnique({
       where: { id },
@@ -253,7 +256,7 @@ export const DeleteItemWithId = async (id: number) => {
   }
 }
 
-export const UpdateItem = async (id: number, data: Item) => {
+export const UpdateItem = async (id: number, data: EditItem) => {
   try {
     const itemToEdit = await FetchItemWithId(id)
     if (itemToEdit.thumbnailId && data.thumbnailId != itemToEdit.thumbnailId) {

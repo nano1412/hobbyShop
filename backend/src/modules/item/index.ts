@@ -1,13 +1,15 @@
 import Elysia, { t } from 'elysia'
-import { ItemModel } from './model'
 import {
-  AddItem,
+  CreateItem,
   DeleteItemWithId,
   FetchItems,
   FetchItemWithId,
   UpdateItem,
 } from '@/services/item.service'
 import { getImageKitAuth } from '@/services/imageKit.service'
+import { ResponseItemModel } from './model/responseItem.model'
+import { AddItemModel } from './model/addItem.model'
+import { EditItemModel } from './model/editItem.model'
 
 export const itemModule = new Elysia({
   name: 'module.items',
@@ -19,7 +21,7 @@ export const itemModule = new Elysia({
       summary: 'Get Item by id',
     },
     response: {
-      200: ItemModel,
+      200: ResponseItemModel,
     },
   })
   .get(
@@ -35,7 +37,7 @@ export const itemModule = new Elysia({
       },
       response: {
         200: t.Object({
-          data: t.Array(ItemModel),
+          data: t.Array(ResponseItemModel),
           meta: t.Object({
             page: t.Number(),
             limit: t.Number(),
@@ -49,10 +51,10 @@ export const itemModule = new Elysia({
   .post(
     '/add',
     ({ body }) => {
-      AddItem(body)
+      CreateItem(body)
     },
     {
-      body: ItemModel,
+      body: AddItemModel,
       detail: {
         tags: ['Item'],
         summary: 'add new item',
@@ -66,7 +68,7 @@ export const itemModule = new Elysia({
     },
   })
   .put('/:id', ({ params, body }) => UpdateItem(Number(params.id), body), {
-    body: ItemModel,
+    body: EditItemModel,
     detail: {
       tags: ['Item'],
       summary: 'edit item',

@@ -14,8 +14,9 @@ import {
 const optionalString = t.Optional(t.String())
 const optionalNumeric = t.Optional(t.Numeric())
 
-export const AddItemModel = t.Object({
+export const ResponseItemModel = t.Object({
   userId: optionalString,
+  id: t.String(),
   categoryId: t.Numeric(),
   name: t.String(),
   description: optionalString,
@@ -27,6 +28,11 @@ export const AddItemModel = t.Object({
   msrpPrice: optionalNumeric,
   msrpCurrency: t.Optional(t.Enum(Currency)),
   releaseYear: optionalNumeric,
+
+  createdAt: t.Optional(t.Date()),
+  createdBy: optionalString,
+  updatedAt: t.Optional(t.Date()),
+  updatedBy: optionalString,
 
   gunplaGrade: t.Optional(t.Enum(GunplaGrade)),
   gunplaExclusivity: t.Optional(t.Enum(GunplaExclusivity)),
@@ -44,4 +50,4 @@ export const AddItemModel = t.Object({
   paintFinish: t.Optional(t.Enum(PaintFinish)),
 })
 
-export type AddItem = Static<typeof AddItemModel>
+export type ResponseItem = Static<typeof ResponseItemModel>
