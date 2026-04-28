@@ -54,7 +54,7 @@ export default function ItemManuPageUI() {
 
     if (requestError) {
       setResultItems(null)
-      setError('Request failed. Check backend server and CORS settings.')
+      setError(requestError.value as string)
       setLoading(false)
       return
     }
@@ -211,7 +211,7 @@ export default function ItemManuPageUI() {
                     <ActionIcon
                       variant="transparent"
                       color="green"
-                      aria-label="view"
+                      aria-label="edit"
                       onClick={() => {
                         navigate({
                           to: `/edit-item/${item.id}`,

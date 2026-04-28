@@ -1,8 +1,8 @@
 type ItemQuery = {
-  page?: string
-  limit?: string
+  page?: number
+  limit?: number
   search?: string
   sort?: string
   order?: string
-  categoryIds?: string
+  categoryIds?: number[]
 }

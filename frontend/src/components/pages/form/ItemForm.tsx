@@ -1,4 +1,3 @@
-import Header from '@/components/common/Header'
 import { authClient } from '@/lib/auth-client'
 
 import { useEffect, useState } from 'react'
@@ -7,7 +6,6 @@ import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone'
 import {
   Button,
-  LoadingOverlay,
   NativeSelect,
   NumberInput,
   Select,
@@ -50,7 +48,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
   const [fetchItemDataLoading, setFetchItemDataLoading] = useState(false)
   const [submitLoading, setSubmitLoading] = useState(false)
 
-  const ItemForm = useForm<item>({
+  const itemForm = useForm<item>({
     validate: zod4Resolver(itemSchema),
     initialValues: {
       userId: session?.user.id,
@@ -85,15 +83,15 @@ export default function ItemForm({ itemid }: ItemFormProps) {
   const [previewImage, setPreviewImage] = useState<string | null>('')
 
   useEffect(() => {
-    if (!ItemForm.values.imageFile) return
+    if (!itemForm.values.imageFile) return
 
-    const objectUrl = URL.createObjectURL(ItemForm.values.imageFile)
+    const objectUrl = URL.createObjectURL(itemForm.values.imageFile)
     setPreviewImage(objectUrl)
 
     return () => {
       URL.revokeObjectURL(objectUrl)
     }
-  }, [ItemForm.values.imageFile])
+  }, [itemForm.values.imageFile])
 
   const initItemData = async () => {
     if (isEditForm) {
@@ -105,14 +103,14 @@ export default function ItemForm({ itemid }: ItemFormProps) {
         .get()
 
       if (requestError) {
-        setError('Request failed. Check backend server and CORS settings.')
+        setError(requestError.value as string)
         setFetchItemDataLoading(false)
         return
       }
       setOldName(data.name)
       setPreviewImage(data.thumbnailPath ? data.thumbnailPath : previewImage)
-      ItemForm.setValues({
-        ...ItemForm.values, // keep existing values like userId
+      itemForm.setValues({
+        ...itemForm.values, // keep existing values like userId
         ...data,
         imageFile: undefined,
       })
@@ -126,7 +124,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
 
   //caetgory validator
   useEffect(() => {
-    const rawCategory = Number(ItemForm.values.categoryId)
+    const rawCategory = Number(itemForm.values.categoryId)
     const category = rawCategory as Category
 
     let nextForms: AdditionalForm[] = []
@@ -160,21 +158,21 @@ export default function ItemForm({ itemid }: ItemFormProps) {
     setAdditionalForm(nextForms)
 
     if (!nextForms.includes(AdditionalForm.FIGURE_COMMON)) {
-      ItemForm.setValues({
+      itemForm.setValues({
         fromSerie: undefined,
         height: undefined,
       })
     }
 
     if (!nextForms.includes(AdditionalForm.BANDAI_GUNPLA_DETAIL)) {
-      ItemForm.setValues({
+      itemForm.setValues({
         gunplaGrade: undefined,
         gunplaExclusivity: undefined,
       })
     }
 
     if (!nextForms.includes(AdditionalForm.LIQUID_PRODUCT)) {
-      ItemForm.setValues({
+      itemForm.setValues({
         liquidProductType: undefined,
         resinType: undefined,
         volumeMl: undefined,
@@ -182,14 +180,14 @@ export default function ItemForm({ itemid }: ItemFormProps) {
     }
 
     if (!nextForms.includes(AdditionalForm.PAINT)) {
-      ItemForm.setValues({
+      itemForm.setValues({
         colorTone: undefined,
         paintSpecialPorperty: undefined,
         paintApplicationMethod: undefined,
         paintFinish: undefined,
       })
     }
-  }, [ItemForm.values.categoryId])
+  }, [itemForm.values.categoryId])
 
   const handleDiscard = () => {
     modals.openConfirmModal({
@@ -205,13 +203,12 @@ export default function ItemForm({ itemid }: ItemFormProps) {
 
   const handleFormSummit = (data: item) => {
     if (isEditForm) {
-      console.log('edit')
       handleEditItem(data)
     } else {
       handleAddItem(data)
     }
   }
-  const handleEditItem = async (data: item) => {
+  const handleEditItem = (data: item) => {
     modals.openConfirmModal({
       title: 'Edit this item?',
       centered: true,
@@ -269,7 +266,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
     })
   }
 
-  const handleAddItem = async (data: item) => {
+  const handleAddItem = (data: item) => {
     modals.openConfirmModal({
       title: 'Save this item?',
       centered: true,
@@ -317,6 +314,11 @@ export default function ItemForm({ itemid }: ItemFormProps) {
   }
   return (
     <>
+      {error ? (
+        <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </section>
+      ) : null}
       {fetchItemDataLoading || submitLoading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -331,7 +333,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
           ) : (
             <h1 className="font-bold text-3xl">Creating New Item</h1>
           )}
-          <form onSubmit={ItemForm.onSubmit(handleFormSummit)}>
+          <form onSubmit={itemForm.onSubmit(handleFormSummit)}>
             <div className="bg-gray-50 rounded-2xl drop-shadow-xl p-5 mt-5">
               <h2 className="text-2xl">General Data</h2>
               <div className="grid grid-cols-3 gap-6">
@@ -341,8 +343,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                     withAsterisk
                     label="Name"
                     placeholder="your item name"
-                    key={ItemForm.key('name')}
-                    {...ItemForm.getInputProps('name')}
+                    key={itemForm.key('name')}
+                    {...itemForm.getInputProps('name')}
                   />
                   <div className="grid grid-cols-2 gap-4">
                     <NativeSelect
@@ -356,16 +358,16 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                         { label: 'liquid product', value: '6' },
                         { label: 'paint', value: '7' },
                       ]}
-                      key={ItemForm.key('categoryId')}
-                      {...ItemForm.getInputProps('categoryId')}
+                      key={itemForm.key('categoryId')}
+                      {...itemForm.getInputProps('categoryId')}
                       disabled={isEditForm}
                     />
 
                     <NumberInput
                       label="Release Year"
                       placeholder="0"
-                      key={ItemForm.key('releaseYear')}
-                      {...ItemForm.getInputProps('releaseYear')}
+                      key={itemForm.key('releaseYear')}
+                      {...itemForm.getInputProps('releaseYear')}
                     />
                   </div>
 
@@ -373,8 +375,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                     withAsterisk
                     label="Brand"
                     placeholder="brand"
-                    key={ItemForm.key('brand')}
-                    {...ItemForm.getInputProps('brand')}
+                    key={itemForm.key('brand')}
+                    {...itemForm.getInputProps('brand')}
                   />
 
                   <div className="grid grid-cols-2 gap-4">
@@ -382,23 +384,23 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                       withAsterisk
                       label="Stock Quantity"
                       placeholder="0"
-                      key={ItemForm.key('stockQty')}
-                      {...ItemForm.getInputProps('stockQty')}
+                      key={itemForm.key('stockQty')}
+                      {...itemForm.getInputProps('stockQty')}
                     />
                     <NumberInput
                       withAsterisk
                       label="Store Price (THB)"
                       placeholder="0"
-                      key={ItemForm.key('storePriceThb')}
-                      {...ItemForm.getInputProps('storePriceThb')}
+                      key={itemForm.key('storePriceThb')}
+                      {...itemForm.getInputProps('storePriceThb')}
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <NumberInput
                       label="MSRP"
                       placeholder="0"
-                      key={ItemForm.key('msrpPrice')}
-                      {...ItemForm.getInputProps('msrpPrice')}
+                      key={itemForm.key('msrpPrice')}
+                      {...itemForm.getInputProps('msrpPrice')}
                     />
                     <Select
                       placeholder="please select value"
@@ -409,8 +411,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                         { label: 'CNY', value: Currency.CNY },
                         { label: 'USD', value: Currency.USD },
                       ]}
-                      key={ItemForm.key('msrpCurrency')}
-                      {...ItemForm.getInputProps('msrpCurrency')}
+                      key={itemForm.key('msrpCurrency')}
+                      {...itemForm.getInputProps('msrpCurrency')}
                     />
                   </div>
                 </div>
@@ -421,10 +423,10 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                     maxFiles={1}
                     multiple={false}
                     onDrop={(files) => {
-                      ItemForm.setFieldValue('imageFile', files[0])
+                      itemForm.setFieldValue('imageFile', files[0])
                     }}
                     onReject={() =>
-                      ItemForm.setFieldError('imageFile', 'Invalid file')
+                      itemForm.setFieldError('imageFile', 'Invalid file')
                     }
                     className="max-w-64 max-h-64 min-w-full min-h-3xs bg-gray-200 grid place-items-center overflow-hidden"
                   >
@@ -443,8 +445,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                   <Textarea
                     label="Description"
                     placeholder="description..."
-                    key={ItemForm.key('description')}
-                    {...ItemForm.getInputProps('description')}
+                    key={itemForm.key('description')}
+                    {...itemForm.getInputProps('description')}
                   />
                 </div>
               </div>
@@ -461,15 +463,15 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                       <TextInput
                         label="From Serie"
                         placeholder="Serie..."
-                        key={ItemForm.key('fromSerie')}
-                        {...ItemForm.getInputProps('fromSerie')}
+                        key={itemForm.key('fromSerie')}
+                        {...itemForm.getInputProps('fromSerie')}
                       />
 
                       <NumberInput
                         label="Height (CM)"
                         placeholder="value"
-                        key={ItemForm.key('height')}
-                        {...ItemForm.getInputProps('height')}
+                        key={itemForm.key('height')}
+                        {...itemForm.getInputProps('height')}
                       />
                     </div>
                   </div>
@@ -485,8 +487,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                         placeholder="please select value"
                         label="Gunpla Grade"
                         data={Object.values(GunplaGrade)}
-                        key={ItemForm.key('gunplaGrade')}
-                        {...ItemForm.getInputProps('gunplaGrade')}
+                        key={itemForm.key('gunplaGrade')}
+                        {...itemForm.getInputProps('gunplaGrade')}
                       />
 
                       <Select
@@ -508,8 +510,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                             value: GunplaExclusivity.special_package,
                           },
                         ]}
-                        key={ItemForm.key('gunplaExclusivity')}
-                        {...ItemForm.getInputProps('gunplaExclusivity')}
+                        key={itemForm.key('gunplaExclusivity')}
+                        {...itemForm.getInputProps('gunplaExclusivity')}
                       />
                     </div>
                   </div>
@@ -523,21 +525,21 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                         placeholder="please select value"
                         label="Liquid Product Type"
                         data={Object.values(LiquidProductType)}
-                        key={ItemForm.key('liquidProductType')}
-                        {...ItemForm.getInputProps('liquidProductType')}
+                        key={itemForm.key('liquidProductType')}
+                        {...itemForm.getInputProps('liquidProductType')}
                       />
                       <Select
                         placeholder="please select value"
                         label="Resin Type"
                         data={Object.values(ResinType)}
-                        key={ItemForm.key('resinType')}
-                        {...ItemForm.getInputProps('resinType')}
+                        key={itemForm.key('resinType')}
+                        {...itemForm.getInputProps('resinType')}
                       />
                       <NumberInput
                         label="Volume (ML)"
                         placeholder="value"
-                        key={ItemForm.key('volumeMl')}
-                        {...ItemForm.getInputProps('volumeMl')}
+                        key={itemForm.key('volumeMl')}
+                        {...itemForm.getInputProps('volumeMl')}
                       />
                     </div>
                   </div>
@@ -551,15 +553,15 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                         placeholder="please select value"
                         label="Color Tone"
                         data={Object.values(ColorTone)}
-                        key={ItemForm.key('colorTone')}
-                        {...ItemForm.getInputProps('colorTone')}
+                        key={itemForm.key('colorTone')}
+                        {...itemForm.getInputProps('colorTone')}
                       />
                       <Select
                         placeholder="please select value"
                         label="Paint Special Porperty"
                         data={Object.values(PaintSpecialPorperty)}
-                        key={ItemForm.key('paintSpecialPorperty')}
-                        {...ItemForm.getInputProps('paintSpecialPorperty')}
+                        key={itemForm.key('paintSpecialPorperty')}
+                        {...itemForm.getInputProps('paintSpecialPorperty')}
                       />
                       <Select
                         placeholder="please select value"
@@ -586,8 +588,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                             value: PaintApplicationMethod.panel_liner,
                           },
                         ]}
-                        key={ItemForm.key('paintApplicationMethod')}
-                        {...ItemForm.getInputProps('paintApplicationMethod')}
+                        key={itemForm.key('paintApplicationMethod')}
+                        {...itemForm.getInputProps('paintApplicationMethod')}
                       />
                       <Select
                         placeholder="please select value"
@@ -608,8 +610,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                             value: PaintFinish.matte,
                           },
                         ]}
-                        key={ItemForm.key('paintFinish')}
-                        {...ItemForm.getInputProps('paintFinish')}
+                        key={itemForm.key('paintFinish')}
+                        {...itemForm.getInputProps('paintFinish')}
                       />
                     </div>
                   </div>
