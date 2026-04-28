@@ -11,14 +11,14 @@ import {
   Button,
   MultiSelect,
 } from '@mantine/core'
-import { IconEdit, IconEye, IconPhoto, IconTrash } from '@tabler/icons-react'
-import { QueryItemSchema, type queryItem } from '@/schema/QueryItemSchema'
+import { IconEdit, IconEye, IconPhotoOff, IconTrash } from '@tabler/icons-react'
 import { useForm } from '@mantine/form'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { CategoryPill } from './CategoryPill'
 import { modals } from '@mantine/modals'
 import { useNavigate } from '@tanstack/react-router'
 import type { itemsResponse } from '@/scripts/type'
+import { QueryItemSchema, type queryItem } from '@/schema/queryItemSchema'
 
 const PAGE_SIZES = [10, 15, 20]
 
@@ -54,7 +54,7 @@ export default function ItemManuPageUI() {
 
     if (requestError) {
       setResultItems(null)
-      setError('Request failed. Check backend server and CORS settings.')
+      setError(requestError.value as string)
       setLoading(false)
       return
     }
@@ -179,7 +179,7 @@ export default function ItemManuPageUI() {
                     </Center>
                   ) : (
                     <Center className="h-20 w-20">
-                      <IconPhoto size={40} stroke={1.5} />
+                      <IconPhotoOff size={40} stroke={1.5} />
                     </Center>
                   ),
               },
@@ -211,11 +211,10 @@ export default function ItemManuPageUI() {
                     <ActionIcon
                       variant="transparent"
                       color="green"
-                      aria-label="view"
+                      aria-label="edit"
                       onClick={() => {
-                        //subject to change to edit later
                         navigate({
-                          to: `/view-item/${item.id}`,
+                          to: `/edit-item/${item.id}`,
                         })
                       }}
                     >

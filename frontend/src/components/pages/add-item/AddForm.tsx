@@ -1,15 +1,11 @@
 import Header from '@/components/common/Header'
 import ItemForm from '../form/ItemForm'
 
-type EditFormProps = {
-  id: number
-}
-
-export default function EditFormUI({ id }: EditFormProps) {
+export default function AddFormUI() {
   return (
     <>
       <Header />
-      <ItemForm itemid={id} />
+      <ItemForm itemid={undefined} />
     </>
   )
 }

@@ -1,27 +1,43 @@
 import Elysia, { t } from 'elysia'
-import { ItemModel } from './model'
-import { AddItem } from '@/services/addItem.service'
+import {
+  CreateItem,
+  DeleteItemWithId,
+  FetchItems,
+  FetchItemWithId,
+  UpdateItem,
+} from '@/services/item.service'
 import { getImageKitAuth } from '@/services/imageKit.service'
-import { FetchItems, FetchItemWithId } from '@/services/readItem.service'
-import { DeleteItemWithId } from '@/services/deleteItem.service'
+import { ResponseItemModel } from './model/responseItem.model'
+import { AddItemModel } from './model/addItem.model'
+import { EditItemModel } from './model/editItem.model'
 
 export const itemModule = new Elysia({
   name: 'module.items',
   prefix: '/api/items',
 })
-  .get('/:id', ({ params }) => FetchItemWithId(params.id), {
+  .get('/:id', ({ params }) => FetchItemWithId(Number(params.id)), {
     detail: {
       tags: ['Item'],
       summary: 'Get Item by id',
     },
     response: {
-      200: ItemModel,
+      200: ResponseItemModel,
     },
   })
   .get(
     '/',
     async ({ query }) => {
-      const result = await FetchItems(query)
+      const processedQuery: ItemQuery = {
+        page: query.page ? parseInt(query.page) : undefined,
+        limit: query.limit ? parseInt(query.limit) : undefined,
+        search: query.search,
+        sort: query.sort,
+        order: query.order,
+        categoryIds: query.categoryIds
+          ? query.categoryIds.split(',').map((id) => Number(id))
+          : undefined,
+      }
+      const result = await FetchItems(processedQuery)
       return result
     },
     {
@@ -31,7 +47,7 @@ export const itemModule = new Elysia({
       },
       response: {
         200: t.Object({
-          data: t.Array(ItemModel),
+          data: t.Array(ResponseItemModel),
           meta: t.Object({
             page: t.Number(),
             limit: t.Number(),
@@ -45,20 +61,27 @@ export const itemModule = new Elysia({
   .post(
     '/add',
     ({ body }) => {
-      AddItem(body)
+      CreateItem(body)
     },
     {
-      body: ItemModel,
+      body: AddItemModel,
       detail: {
         tags: ['Item'],
         summary: 'add new item',
       },
     },
   )
-  .delete('/:id', ({ params }) => DeleteItemWithId(params.id), {
+  .delete('/:id', ({ params }) => DeleteItemWithId(Number(params.id)), {
     detail: {
       tags: ['Item'],
       summary: 'Delete Item by id',
+    },
+  })
+  .put('/:id', ({ params, body }) => UpdateItem(Number(params.id), body), {
+    body: EditItemModel,
+    detail: {
+      tags: ['Item'],
+      summary: 'edit item',
     },
   })
   .get(
@@ -77,10 +100,3 @@ export const itemModule = new Elysia({
       },
     },
   )
-
-// get all items (item menu) / OK
-// get item with id /:id OK
-// add item /add OK
-// delete item /delete/:id
-// edit item /edit/:id
-// get imageupload permission auth /imgauth

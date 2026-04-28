@@ -9,14 +9,11 @@ import {
   PaintSpecialPorperty,
   ResinType,
   Currency,
-} from '../../../generated/prisma/client'
+} from '../../../../generated/prisma/client'
+import { optionalNumeric, optionalString } from '@/utils/elysiaTypeUtil'
 
-const optionalString = t.Optional(t.String())
-const optionalNumeric = t.Optional(t.Numeric())
-
-export const ItemModel = t.Object({
+export const EditItemModel = t.Object({
   userId: optionalString,
-  id: optionalNumeric,
   categoryId: t.Numeric(),
   name: t.String(),
   description: optionalString,
@@ -32,7 +29,6 @@ export const ItemModel = t.Object({
   createdAt: t.Optional(t.Date()),
   createdBy: optionalString,
   updatedAt: t.Optional(t.Date()),
-  updatedBy: optionalString,
 
   gunplaGrade: t.Optional(t.Enum(GunplaGrade)),
   gunplaExclusivity: t.Optional(t.Enum(GunplaExclusivity)),
@@ -50,4 +46,4 @@ export const ItemModel = t.Object({
   paintFinish: t.Optional(t.Enum(PaintFinish)),
 })
 
-export type Item = Static<typeof ItemModel>
+export type EditItem = Static<typeof EditItemModel>

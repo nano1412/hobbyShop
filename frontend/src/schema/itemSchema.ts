@@ -24,7 +24,7 @@ const requiredInt = z
 
 export const itemSchema = z.object({
   userId: optionalString,
-  id: optionalInt, //for update
+  id: optionalString,
   categoryId: z.union([z.string(), z.int()]), // integer
   name: requiredString,
   description: optionalString,
@@ -34,7 +34,9 @@ export const itemSchema = z.object({
   imageFile: z.file().optional(),
 
   brand: requiredString,
-  stockQty: requiredInt, // integer
+  stockQty: z.number().refine((value) => value >= 0, {
+    message: 'this field can not be negative',
+  }),
   storePriceThb: requiredNumber,
   msrpPrice: optionalNumber,
   msrpCurrency: z.enum(Currency).optional(), // replace with your Prisma enum values
