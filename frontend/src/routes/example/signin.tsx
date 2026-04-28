@@ -41,7 +41,7 @@ function SignInPage() {
       return
     }
 
-    navigate({ to: '/example/authenticated' })
+    navigate({ to: '/' })
   }
 
   return (

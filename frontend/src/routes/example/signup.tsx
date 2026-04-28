@@ -48,7 +48,7 @@ function SignUpPage() {
       return
     }
 
-    navigate({ to: '/example/authenticated' })
+    navigate({ to: '/' })
   }
 
   return (
