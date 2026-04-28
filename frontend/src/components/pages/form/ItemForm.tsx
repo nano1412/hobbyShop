@@ -7,6 +7,7 @@ import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone'
 import {
   Button,
+  LoadingOverlay,
   NativeSelect,
   NumberInput,
   Select,
@@ -14,7 +15,7 @@ import {
   TextInput,
 } from '@mantine/core'
 import { Image } from '@mantine/core'
-import { itemSchema, type item } from '@/schema/ItemSchema'
+import { itemSchema, type item } from '@/schema/itemSchema'
 import { eden } from '@/lib/eden'
 import { uploadToImageKit } from '@/scripts/imagekit-client'
 import {
@@ -46,7 +47,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
   const { data: session } = authClient.useSession()
   const [additionalForm, setAdditionalForm] = useState<AdditionalForm[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [fetchItemDataLoading, setFetchItemDataLoading] = useState(false)
+  const [submitLoading, setSubmitLoading] = useState(false)
 
   const ItemForm = useForm<item>({
     validate: zod4Resolver(itemSchema),
@@ -95,7 +97,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
 
   const initItemData = async () => {
     if (isEditForm) {
-      setLoading(true)
+      setFetchItemDataLoading(true)
       setError(null)
 
       const { data, error: requestError } = await eden.api
@@ -104,13 +106,17 @@ export default function ItemForm({ itemid }: ItemFormProps) {
 
       if (requestError) {
         setError('Request failed. Check backend server and CORS settings.')
-        setLoading(false)
+        setFetchItemDataLoading(false)
         return
       }
       setOldName(data.name)
       setPreviewImage(data.thumbnailPath ? data.thumbnailPath : previewImage)
-      ItemForm.setValues({ ...data, imageFile: undefined })
-      setLoading(false)
+      ItemForm.setValues({
+        ...ItemForm.values, // keep existing values like userId
+        ...data,
+        imageFile: undefined,
+      })
+      setFetchItemDataLoading(false)
     }
   }
 
@@ -122,50 +128,52 @@ export default function ItemForm({ itemid }: ItemFormProps) {
   useEffect(() => {
     const rawCategory = Number(ItemForm.values.categoryId)
     const category = rawCategory as Category
+
+    let nextForms: AdditionalForm[] = []
+
     switch (category) {
       case Category.MODEL_KIT:
-        setAdditionalForm([AdditionalForm.FIGURE_COMMON])
+        nextForms = [AdditionalForm.FIGURE_COMMON]
         break
       case Category.GUNPLA:
-        setAdditionalForm([
+        nextForms = [
           AdditionalForm.BANDAI_GUNPLA_DETAIL,
           AdditionalForm.FIGURE_COMMON,
-        ])
+        ]
         break
       case Category.FIGURE:
-        setAdditionalForm([AdditionalForm.FIGURE_COMMON])
+        nextForms = [AdditionalForm.FIGURE_COMMON]
         break
       case Category.TOOL:
-        setAdditionalForm([])
+        nextForms = []
         break
       case Category.LIQUID_PRODUCT:
-        setAdditionalForm([AdditionalForm.LIQUID_PRODUCT])
+        nextForms = [AdditionalForm.LIQUID_PRODUCT]
         break
       case Category.PAINT:
-        setAdditionalForm([AdditionalForm.LIQUID_PRODUCT, AdditionalForm.PAINT])
+        nextForms = [AdditionalForm.LIQUID_PRODUCT, AdditionalForm.PAINT]
         break
       default:
-        setAdditionalForm([])
+        nextForms = []
     }
 
-    //reset field
-    //model kit
-    if (!additionalForm.includes(AdditionalForm.FIGURE_COMMON)) {
+    setAdditionalForm(nextForms)
+
+    if (!nextForms.includes(AdditionalForm.FIGURE_COMMON)) {
       ItemForm.setValues({
         fromSerie: undefined,
         height: undefined,
       })
     }
 
-    // gunpla
-    if (!additionalForm.includes(AdditionalForm.BANDAI_GUNPLA_DETAIL)) {
+    if (!nextForms.includes(AdditionalForm.BANDAI_GUNPLA_DETAIL)) {
       ItemForm.setValues({
         gunplaGrade: undefined,
         gunplaExclusivity: undefined,
       })
     }
 
-    if (!additionalForm.includes(AdditionalForm.LIQUID_PRODUCT)) {
+    if (!nextForms.includes(AdditionalForm.LIQUID_PRODUCT)) {
       ItemForm.setValues({
         liquidProductType: undefined,
         resinType: undefined,
@@ -173,7 +181,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
       })
     }
 
-    if (!additionalForm.includes(AdditionalForm.PAINT)) {
+    if (!nextForms.includes(AdditionalForm.PAINT)) {
       ItemForm.setValues({
         colorTone: undefined,
         paintSpecialPorperty: undefined,
@@ -197,6 +205,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
 
   const handleFormSummit = (data: item) => {
     if (isEditForm) {
+      console.log('edit')
       handleEditItem(data)
     } else {
       handleAddItem(data)
@@ -209,6 +218,8 @@ export default function ItemForm({ itemid }: ItemFormProps) {
       labels: { confirm: 'OK', cancel: 'Cancel' },
       onConfirm: async () => {
         try {
+          setSubmitLoading(true)
+          setError(null)
           if (isEditForm) {
             if (data.imageFile) {
               const { url, fileId } = await uploadToImageKit(data.imageFile)
@@ -226,6 +237,10 @@ export default function ItemForm({ itemid }: ItemFormProps) {
               })
 
             if (requestError) {
+              setError(
+                'Request failed. Check backend server and CORS settings.',
+              )
+              setSubmitLoading(false)
               console.error('API error', requestError)
               notifications.show({
                 title: 'Error!',
@@ -238,6 +253,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
               title: 'Success!',
               message: 'Edit item success',
             })
+            setSubmitLoading(false)
             navigate({ to: '/' })
           }
         } catch (err) {
@@ -296,10 +312,12 @@ export default function ItemForm({ itemid }: ItemFormProps) {
   }
   return (
     <>
-      {loading ? (
+      {fetchItemDataLoading || submitLoading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600">getting item data...</p>
+          <p className="text-gray-600">
+            {fetchItemDataLoading ? 'Getting item data...' : 'Saving item...'}
+          </p>
         </div>
       ) : (
         <div className=" mx-20 p-5 ">
@@ -308,7 +326,6 @@ export default function ItemForm({ itemid }: ItemFormProps) {
           ) : (
             <h1 className="font-bold text-3xl">Creating New Item</h1>
           )}
-
           <form onSubmit={ItemForm.onSubmit(handleFormSummit)}>
             <div className="bg-gray-50 rounded-2xl drop-shadow-xl p-5 mt-5">
               <h2 className="text-2xl">General Data</h2>

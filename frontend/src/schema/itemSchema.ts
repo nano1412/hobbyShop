@@ -24,7 +24,7 @@ const requiredInt = z
 
 export const itemSchema = z.object({
   userId: optionalString,
-  id: optionalInt, //for update
+  id: optionalString,
   categoryId: z.union([z.string(), z.int()]), // integer
   name: requiredString,
   description: optionalString,

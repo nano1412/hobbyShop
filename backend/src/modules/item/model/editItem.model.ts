@@ -31,7 +31,6 @@ export const EditItemModel = t.Object({
   createdAt: t.Optional(t.Date()),
   createdBy: optionalString,
   updatedAt: t.Optional(t.Date()),
-  updatedBy: t.String(),
 
   gunplaGrade: t.Optional(t.Enum(GunplaGrade)),
   gunplaExclusivity: t.Optional(t.Enum(GunplaExclusivity)),
