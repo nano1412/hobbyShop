@@ -1,4 +1,3 @@
-import Header from '@/components/common/Header'
 import { authClient } from '@/lib/auth-client'
 
 import { useEffect, useState } from 'react'
@@ -7,7 +6,6 @@ import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone'
 import {
   Button,
-  LoadingOverlay,
   NativeSelect,
   NumberInput,
   Select,
@@ -105,7 +103,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
         .get()
 
       if (requestError) {
-        setError('Request failed. Check backend server and CORS settings.')
+        setError(requestError.value as string)
         setFetchItemDataLoading(false)
         return
       }
@@ -316,6 +314,11 @@ export default function ItemForm({ itemid }: ItemFormProps) {
   }
   return (
     <>
+      {error ? (
+        <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </section>
+      ) : null}
       {fetchItemDataLoading || submitLoading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
