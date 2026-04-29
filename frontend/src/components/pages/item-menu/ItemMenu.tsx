@@ -1,4 +1,3 @@
-import Header from '@/components/common/Header'
 import { eden } from '@/lib/eden'
 import { useEffect, useState } from 'react'
 import { DataTable } from 'mantine-datatable'
@@ -77,7 +76,6 @@ export default function ItemManuPageUI() {
 
   return (
     <>
-      <Header />
       <div className=" mx-20 p-5 ">
         <form onSubmit={form.onSubmit(callItems)}>
           <div className="flex justify-between mb-5">

@@ -8,10 +8,13 @@ import { CategoryPill } from '../item-menu/CategoryPill'
 import { Button, Center, Image } from '@mantine/core'
 import { IconPhotoOff } from '@tabler/icons-react'
 import type { itemResponse } from '@/scripts/type'
+import { authClient } from '@/lib/auth-client'
 
 export default function ViewItemUI() {
+  const { data: session } = authClient.useSession()
+
   const navigate = useNavigate()
-  const { id } = useParams({ from: '/view-item/$id' })
+  const { id } = useParams({ from: '/(app)/view-item/$id' })
   const [loading, setLoading] = useState(false)
   const [resultItem, setResultItem] = useState<itemResponse | null>({
     id: 0,
