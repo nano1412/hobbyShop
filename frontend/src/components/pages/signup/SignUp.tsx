@@ -83,7 +83,7 @@ export default function SignUpUI() {
             {...signUpForm.getInputProps('confirmPassword')}
           />
 
-          <Button className="w-full mt-5" type="submit">
+          <Button className="w-full mt-5" type="submit" loading={loading}>
             SignUp
           </Button>
           <Button
