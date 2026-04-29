@@ -135,7 +135,7 @@ export default function ViewItemUI() {
               <div>
                 {/* image */}
                 <div className=" min-w-full min-h-3xs grid place-items-center overflow-hidden">
-                  <Center className="w-70 h-70 rounded-2xl border-2 border-dashed border-gray-400">
+                  <Center className="w-80 h-80 rounded-2xl border-2 border-dashed border-gray-400">
                     {resultItem.thumbnailPath ? (
                       <Image
                         src={resultItem.thumbnailPath}
@@ -150,11 +150,12 @@ export default function ViewItemUI() {
                     )}
                   </Center>
                 </div>
-                <DataWithLabel
-                  label="Description"
-                  text={resultItem.description}
-                />
               </div>
+              <DataWithLabel
+                label="Description"
+                additionalClass="col-span-2"
+                text={resultItem.description}
+              />
             </div>
           </div>
 
