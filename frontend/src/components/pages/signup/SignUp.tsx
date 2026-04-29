@@ -40,20 +40,15 @@ export default function SignUpUI() {
   }
   return (
     <>
-      {error ? (
-        <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
-        </section>
-      ) : null}
       <div className="mx-auto my-10 max-w-xl px-6 py-12 bg-gray-50 rounded-2xl drop-shadow-xl">
         <form onSubmit={signUpForm.onSubmit(handleSignUp)}>
-          <h1 className="font-bold text-2xl ">SignUp</h1>
+          <h1 className="font-bold text-2xl ">Sign Up</h1>
           <Text className="mb-5" c="dimmed" size="sm" mt={4}>
-            SignUp to this hobby shop
+            Sign Up to this hobby shop
           </Text>
           <TextInput
             withAsterisk
-            label="E-Mail"
+            label="Email"
             placeholder="enter your email"
             key={signUpForm.key('email')}
             {...signUpForm.getInputProps('email')}
@@ -83,8 +78,14 @@ export default function SignUpUI() {
             {...signUpForm.getInputProps('confirmPassword')}
           />
 
+          {error ? (
+            <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {error}
+            </section>
+          ) : null}
+
           <Button className="w-full mt-5" type="submit" loading={loading}>
-            SignUp
+            Sign Up
           </Button>
           <Button
             className="w-full mt-5"
@@ -93,7 +94,7 @@ export default function SignUpUI() {
               navigate({ to: '/signin' })
             }}
           >
-            Already has account? go to signIn
+            Already has account? go to sign In
           </Button>
         </form>
       </div>
