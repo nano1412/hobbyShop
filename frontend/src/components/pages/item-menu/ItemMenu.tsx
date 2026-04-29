@@ -58,7 +58,6 @@ export default function ItemManuPageUI() {
       setLoading(false)
       return
     }
-
     setResultItems(data)
     setLoading(false)
   }
@@ -122,6 +121,7 @@ export default function ItemManuPageUI() {
 
           <DataTable
             fetching={loading}
+            minHeight={180}
             withTableBorder
             recordsPerPageOptions={PAGE_SIZES}
             totalRecords={resultItems?.meta.total || 0}
@@ -185,12 +185,31 @@ export default function ItemManuPageUI() {
               },
               { accessor: 'name', sortable: true },
               {
+                title: 'Category',
                 accessor: 'categoryId',
                 sortable: true,
                 render: (item) => <CategoryPill categoryId={item.categoryId} />,
               },
-              { accessor: 'storePriceThb', sortable: true },
-              { accessor: 'stockQty', sortable: true },
+              {
+                title: 'Price (THB)',
+                accessor: 'storePriceThb',
+                sortable: true,
+                textAlign: 'right',
+                render: (item) =>
+                  Number(item.storePriceThb).toLocaleString('th-TH', {
+                    style: 'currency',
+                    currency: 'THB',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }),
+              },
+              {
+                title: 'Stock Quantity',
+                accessor: 'stockQty',
+                sortable: true,
+                textAlign: 'right',
+                render: (item) => item.stockQty.toLocaleString(),
+              },
               {
                 accessor: 'id',
                 title: 'Row actions',
