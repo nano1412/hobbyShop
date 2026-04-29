@@ -1,8 +1,8 @@
 import { authClient } from '@/lib/auth-client'
 import { signUpSchema, type signUp } from '@/schema/signUpSchema'
-import { Button, TextInput, Text, PasswordInput } from '@mantine/core'
+import { Button, TextInput, Text, PasswordInput, Group } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { useState } from 'react'
 
@@ -87,15 +87,19 @@ export default function SignUpUI() {
           <Button className="w-full mt-5" type="submit" loading={loading}>
             Sign Up
           </Button>
-          <Button
-            className="w-full mt-5"
-            variant="outline"
-            onClick={() => {
-              navigate({ to: '/signin' })
-            }}
-          >
-            Already has account? go to sign In
-          </Button>
+          <Group gap="xs" className="mt-3">
+            <Text c="dimmed" size="sm">
+              Already have an account?
+            </Text>
+            <Button
+              component={Link}
+              to="/signin"
+              variant="subtle"
+              size="compact-sm"
+            >
+              Sign In
+            </Button>
+          </Group>
         </form>
       </div>
     </>

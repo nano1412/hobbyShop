@@ -1,9 +1,9 @@
 import { signInSchema, type signIn } from '@/schema/signInSchema'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
 import { useState } from 'react'
 import { useForm } from '@mantine/form'
-import { Button, PasswordInput, TextInput, Text } from '@mantine/core'
+import { Button, PasswordInput, TextInput, Text, Group } from '@mantine/core'
 import z from 'zod'
 import { authClient } from '@/lib/auth-client'
 
@@ -81,15 +81,19 @@ export default function SignInUI() {
           <Button className="w-full mt-5" type="submit" loading={loading}>
             Sign In
           </Button>
-          <Button
-            className="w-full mt-5"
-            variant="outline"
-            onClick={() => {
-              navigate({ to: '/signup' })
-            }}
-          >
-            Sign Up
-          </Button>
+          <Group gap="xs" className="mt-3">
+            <Text c="dimmed" size="sm">
+              Need a new account?
+            </Text>
+            <Button
+              component={Link}
+              to="/signup"
+              variant="subtle"
+              size="compact-sm"
+            >
+              Sign Up
+            </Button>
+          </Group>
         </form>
       </div>
     </>
