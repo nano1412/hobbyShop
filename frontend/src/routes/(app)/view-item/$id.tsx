@@ -6,5 +6,6 @@ export const Route = createFileRoute('/(app)/view-item/$id')({
 })
 
 function ViewItem() {
-  return <ViewItemUI />
+  const { id } = Route.useParams()
+  return <ViewItemUI id={Number(id)} />
 }

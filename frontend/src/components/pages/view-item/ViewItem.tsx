@@ -8,9 +8,12 @@ import { Button, Center, Image } from '@mantine/core'
 import { IconPhotoOff } from '@tabler/icons-react'
 import type { itemResponse } from '@/scripts/type'
 
-export default function ViewItemUI() {
+type ViewItemProps = {
+  id: number
+}
+
+export default function ViewItemUI({ id }: ViewItemProps) {
   const navigate = useNavigate()
-  const { id } = useParams({ from: '/(app)/view-item/$id' })
   const [loading, setLoading] = useState(false)
   const [resultItem, setResultItem] = useState<itemResponse | null>({
     id: 0,
