@@ -444,6 +444,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                   </Dropzone>
                 </div>
                 <Textarea
+                  maxLength={500}
                   className="col-span-2 "
                   label="Description"
                   placeholder="description..."
