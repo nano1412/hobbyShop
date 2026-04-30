@@ -1,4 +1,3 @@
-import Header from '@/components/common/Header'
 import { eden } from '@/lib/eden'
 
 import { useNavigate, useParams } from '@tanstack/react-router'
@@ -9,9 +8,12 @@ import { Button, Center, Image } from '@mantine/core'
 import { IconPhotoOff } from '@tabler/icons-react'
 import type { itemResponse } from '@/scripts/type'
 
-export default function ViewItemUI() {
+type ViewItemProps = {
+  id: number
+}
+
+export default function ViewItemUI({ id }: ViewItemProps) {
   const navigate = useNavigate()
-  const { id } = useParams({ from: '/view-item/$id' })
   const [loading, setLoading] = useState(false)
   const [resultItem, setResultItem] = useState<itemResponse | null>({
     id: 0,
@@ -85,7 +87,6 @@ export default function ViewItemUI() {
 
   return (
     <>
-      <Header />
       {error ? (
         <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
@@ -135,7 +136,7 @@ export default function ViewItemUI() {
               <div>
                 {/* image */}
                 <div className=" min-w-full min-h-3xs grid place-items-center overflow-hidden">
-                  <Center className="w-70 h-70 rounded-2xl border-2 border-dashed border-gray-400">
+                  <Center className="w-80 h-80 rounded-2xl border-2 border-dashed border-gray-400">
                     {resultItem.thumbnailPath ? (
                       <Image
                         src={resultItem.thumbnailPath}
@@ -150,11 +151,12 @@ export default function ViewItemUI() {
                     )}
                   </Center>
                 </div>
-                <DataWithLabel
-                  label="Description"
-                  text={resultItem.description}
-                />
               </div>
+              <DataWithLabel
+                label="Description"
+                additionalClass="col-span-2"
+                text={resultItem.description}
+              />
             </div>
           </div>
 

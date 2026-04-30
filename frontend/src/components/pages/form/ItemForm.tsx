@@ -417,7 +417,7 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                   </div>
                 </div>
 
-                <div>
+                <div className="flex justify-center">
                   <Dropzone
                     accept={IMAGE_MIME_TYPE}
                     maxFiles={1}
@@ -428,12 +428,12 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                     onReject={() =>
                       itemForm.setFieldError('imageFile', 'Invalid file')
                     }
-                    className="max-w-64 max-h-64 min-w-full min-h-3xs bg-gray-200 grid place-items-center overflow-hidden"
+                    className="max-w-85 mt-6.5 aspect-square bg-gray-200 grid place-items-center overflow-hidden"
                   >
                     {previewImage ? (
                       <Image
                         src={previewImage}
-                        className=" h-55 object-contain"
+                        className=" min-w-full aspect-square object-contain"
                       />
                     ) : (
                       <div className=" text-center">
@@ -442,13 +442,15 @@ export default function ItemForm({ itemid }: ItemFormProps) {
                       </div>
                     )}
                   </Dropzone>
-                  <Textarea
-                    label="Description"
-                    placeholder="description..."
-                    key={itemForm.key('description')}
-                    {...itemForm.getInputProps('description')}
-                  />
                 </div>
+                <Textarea
+                  maxLength={500}
+                  className="col-span-2 "
+                  label="Description"
+                  placeholder="description..."
+                  key={itemForm.key('description')}
+                  {...itemForm.getInputProps('description')}
+                />
               </div>
             </div>
             {/* additionalForm.length > 0 */}

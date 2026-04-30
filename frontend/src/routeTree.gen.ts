@@ -10,115 +10,125 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as NotFoundRouteImport } from './routes/not-found'
-import { Route as AddItemRouteImport } from './routes/add-item'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ViewItemIdRouteImport } from './routes/view-item/$id'
-import { Route as ExampleSignupRouteImport } from './routes/example/signup'
-import { Route as ExampleSigninRouteImport } from './routes/example/signin'
-import { Route as EditItemIdRouteImport } from './routes/edit-item/$id'
+import { Route as authRouteRouteImport } from './routes/(auth)/route'
+import { Route as appRouteRouteImport } from './routes/(app)/route'
+import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as appAddItemRouteImport } from './routes/(app)/add-item'
+import { Route as appViewItemIdRouteImport } from './routes/(app)/view-item/$id'
+import { Route as appEditItemIdRouteImport } from './routes/(app)/edit-item/$id'
 
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AddItemRoute = AddItemRouteImport.update({
-  id: '/add-item',
-  path: '/add-item',
+const authRouteRoute = authRouteRouteImport.update({
+  id: '/(auth)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const appRouteRoute = appRouteRouteImport.update({
+  id: '/(app)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appIndexRoute = appIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
-const ViewItemIdRoute = ViewItemIdRouteImport.update({
+const authSignUpRoute = authSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const authSignInRoute = authSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const appAddItemRoute = appAddItemRouteImport.update({
+  id: '/add-item',
+  path: '/add-item',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appViewItemIdRoute = appViewItemIdRouteImport.update({
   id: '/view-item/$id',
   path: '/view-item/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
-const ExampleSignupRoute = ExampleSignupRouteImport.update({
-  id: '/example/signup',
-  path: '/example/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExampleSigninRoute = ExampleSigninRouteImport.update({
-  id: '/example/signin',
-  path: '/example/signin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EditItemIdRoute = EditItemIdRouteImport.update({
+const appEditItemIdRoute = appEditItemIdRouteImport.update({
   id: '/edit-item/$id',
   path: '/edit-item/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => appRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/add-item': typeof AddItemRoute
   '/not-found': typeof NotFoundRoute
-  '/edit-item/$id': typeof EditItemIdRoute
-  '/example/signin': typeof ExampleSigninRoute
-  '/example/signup': typeof ExampleSignupRoute
-  '/view-item/$id': typeof ViewItemIdRoute
+  '/add-item': typeof appAddItemRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
+  '/': typeof appIndexRoute
+  '/edit-item/$id': typeof appEditItemIdRoute
+  '/view-item/$id': typeof appViewItemIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/add-item': typeof AddItemRoute
   '/not-found': typeof NotFoundRoute
-  '/edit-item/$id': typeof EditItemIdRoute
-  '/example/signin': typeof ExampleSigninRoute
-  '/example/signup': typeof ExampleSignupRoute
-  '/view-item/$id': typeof ViewItemIdRoute
+  '/add-item': typeof appAddItemRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
+  '/': typeof appIndexRoute
+  '/edit-item/$id': typeof appEditItemIdRoute
+  '/view-item/$id': typeof appViewItemIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/add-item': typeof AddItemRoute
+  '/(app)': typeof appRouteRouteWithChildren
+  '/(auth)': typeof authRouteRouteWithChildren
   '/not-found': typeof NotFoundRoute
-  '/edit-item/$id': typeof EditItemIdRoute
-  '/example/signin': typeof ExampleSigninRoute
-  '/example/signup': typeof ExampleSignupRoute
-  '/view-item/$id': typeof ViewItemIdRoute
+  '/(app)/add-item': typeof appAddItemRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-up': typeof authSignUpRoute
+  '/(app)/': typeof appIndexRoute
+  '/(app)/edit-item/$id': typeof appEditItemIdRoute
+  '/(app)/view-item/$id': typeof appViewItemIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/add-item'
     | '/not-found'
+    | '/add-item'
+    | '/sign-in'
+    | '/sign-up'
+    | '/'
     | '/edit-item/$id'
-    | '/example/signin'
-    | '/example/signup'
     | '/view-item/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/add-item'
     | '/not-found'
+    | '/add-item'
+    | '/sign-in'
+    | '/sign-up'
+    | '/'
     | '/edit-item/$id'
-    | '/example/signin'
-    | '/example/signup'
     | '/view-item/$id'
   id:
     | '__root__'
-    | '/'
-    | '/add-item'
+    | '/(app)'
+    | '/(auth)'
     | '/not-found'
-    | '/edit-item/$id'
-    | '/example/signin'
-    | '/example/signup'
-    | '/view-item/$id'
+    | '/(app)/add-item'
+    | '/(auth)/sign-in'
+    | '/(auth)/sign-up'
+    | '/(app)/'
+    | '/(app)/edit-item/$id'
+    | '/(app)/view-item/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AddItemRoute: typeof AddItemRoute
+  appRouteRoute: typeof appRouteRouteWithChildren
+  authRouteRoute: typeof authRouteRouteWithChildren
   NotFoundRoute: typeof NotFoundRoute
-  EditItemIdRoute: typeof EditItemIdRoute
-  ExampleSigninRoute: typeof ExampleSigninRoute
-  ExampleSignupRoute: typeof ExampleSignupRoute
-  ViewItemIdRoute: typeof ViewItemIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -130,59 +140,101 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotFoundRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/add-item': {
-      id: '/add-item'
-      path: '/add-item'
-      fullPath: '/add-item'
-      preLoaderRoute: typeof AddItemRouteImport
+    '/(auth)': {
+      id: '/(auth)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof authRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/(app)': {
+      id: '/(app)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof appRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)/': {
+      id: '/(app)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appIndexRouteImport
+      parentRoute: typeof appRouteRoute
     }
-    '/view-item/$id': {
-      id: '/view-item/$id'
+    '/(auth)/sign-up': {
+      id: '/(auth)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof authSignUpRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(app)/add-item': {
+      id: '/(app)/add-item'
+      path: '/add-item'
+      fullPath: '/add-item'
+      preLoaderRoute: typeof appAddItemRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/view-item/$id': {
+      id: '/(app)/view-item/$id'
       path: '/view-item/$id'
       fullPath: '/view-item/$id'
-      preLoaderRoute: typeof ViewItemIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appViewItemIdRouteImport
+      parentRoute: typeof appRouteRoute
     }
-    '/example/signup': {
-      id: '/example/signup'
-      path: '/example/signup'
-      fullPath: '/example/signup'
-      preLoaderRoute: typeof ExampleSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/example/signin': {
-      id: '/example/signin'
-      path: '/example/signin'
-      fullPath: '/example/signin'
-      preLoaderRoute: typeof ExampleSigninRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/edit-item/$id': {
-      id: '/edit-item/$id'
+    '/(app)/edit-item/$id': {
+      id: '/(app)/edit-item/$id'
       path: '/edit-item/$id'
       fullPath: '/edit-item/$id'
-      preLoaderRoute: typeof EditItemIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof appEditItemIdRouteImport
+      parentRoute: typeof appRouteRoute
     }
   }
 }
 
+interface appRouteRouteChildren {
+  appAddItemRoute: typeof appAddItemRoute
+  appIndexRoute: typeof appIndexRoute
+  appEditItemIdRoute: typeof appEditItemIdRoute
+  appViewItemIdRoute: typeof appViewItemIdRoute
+}
+
+const appRouteRouteChildren: appRouteRouteChildren = {
+  appAddItemRoute: appAddItemRoute,
+  appIndexRoute: appIndexRoute,
+  appEditItemIdRoute: appEditItemIdRoute,
+  appViewItemIdRoute: appViewItemIdRoute,
+}
+
+const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
+  appRouteRouteChildren,
+)
+
+interface authRouteRouteChildren {
+  authSignInRoute: typeof authSignInRoute
+  authSignUpRoute: typeof authSignUpRoute
+}
+
+const authRouteRouteChildren: authRouteRouteChildren = {
+  authSignInRoute: authSignInRoute,
+  authSignUpRoute: authSignUpRoute,
+}
+
+const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
+  authRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AddItemRoute: AddItemRoute,
+  appRouteRoute: appRouteRouteWithChildren,
+  authRouteRoute: authRouteRouteWithChildren,
   NotFoundRoute: NotFoundRoute,
-  EditItemIdRoute: EditItemIdRoute,
-  ExampleSigninRoute: ExampleSigninRoute,
-  ExampleSignupRoute: ExampleSignupRoute,
-  ViewItemIdRoute: ViewItemIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

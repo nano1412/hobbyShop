@@ -18,9 +18,6 @@ const requiredNumber = z.number().refine((value) => value > 0, {
   message: 'this field must not be greater than 0',
 })
 const optionalInt = z.int().optional()
-const requiredInt = z
-  .int('must be integer')
-  .min(1, 'this field must be greater than 0')
 
 export const itemSchema = z.object({
   userId: optionalString,

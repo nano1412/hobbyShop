@@ -1,4 +1,3 @@
-import Header from '@/components/common/Header'
 import { eden } from '@/lib/eden'
 import { useEffect, useState } from 'react'
 import { DataTable } from 'mantine-datatable'
@@ -25,10 +24,10 @@ const PAGE_SIZES = [10, 15, 20]
 export default function ItemManuPageUI() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const [resultItems, setResultItems] = useState<itemsResponse | null>(null)
+  const [itemRecords, setItemRecords] = useState<itemsResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<queryItem>({
+  const query = useForm<queryItem>({
     validate: zod4Resolver(QueryItemSchema),
     initialValues: {
       page: '1',
@@ -41,7 +40,7 @@ export default function ItemManuPageUI() {
   })
 
   useEffect(() => {
-    callItems(form.values)
+    callItems(query.values)
   }, [])
 
   const callItems = async (form: queryItem) => {
@@ -53,13 +52,12 @@ export default function ItemManuPageUI() {
     })
 
     if (requestError) {
-      setResultItems(null)
+      setItemRecords(null)
       setError(requestError.value as string)
       setLoading(false)
       return
     }
-
-    setResultItems(data)
+    setItemRecords(data)
     setLoading(false)
   }
 
@@ -71,22 +69,21 @@ export default function ItemManuPageUI() {
       confirmProps: { color: 'red' },
       onConfirm: async () => {
         await eden.api.items({ id }).delete()
-        await callItems({ ...form.values })
+        await callItems({ ...query.values })
       },
     })
   }
 
   return (
     <>
-      <Header />
       <div className=" mx-20 p-5 ">
-        <form onSubmit={form.onSubmit(callItems)}>
+        <form onSubmit={query.onSubmit(callItems)}>
           <div className="flex justify-between mb-5">
             <div className="flex">
               <TextInput
                 placeholder="Search..."
-                key={form.key('search')}
-                {...form.getInputProps('search')}
+                key={query.key('search')}
+                {...query.getInputProps('search')}
               />
               <MultiSelect
                 className="mx-5"
@@ -101,12 +98,12 @@ export default function ItemManuPageUI() {
                   { label: 'paint', value: '7' },
                 ]}
                 value={
-                  form.values.categoryIds
-                    ? form.values.categoryIds.split(',')
+                  query.values.categoryIds
+                    ? query.values.categoryIds.split(',')
                     : []
                 }
                 onChange={(values) => {
-                  form.setFieldValue('categoryIds', values.join(','))
+                  query.setFieldValue('categoryIds', values.join(','))
                 }}
               />
               <Button type="submit">Search</Button>
@@ -122,43 +119,46 @@ export default function ItemManuPageUI() {
 
           <DataTable
             fetching={loading}
+            minHeight={180}
             withTableBorder
             recordsPerPageOptions={PAGE_SIZES}
-            totalRecords={resultItems?.meta.total || 0}
-            page={Number(resultItems?.meta.page)}
+            totalRecords={itemRecords?.meta.total || 0}
+            page={Number(itemRecords?.meta.page)}
             onPageChange={(p) => {
               const nextValues = {
-                ...form.values,
+                ...query.values,
                 page: String(p),
               }
 
-              form.setValues(nextValues)
+              query.setValues(nextValues)
               callItems(nextValues)
             }}
-            recordsPerPage={Number(resultItems?.meta.limit)}
+            recordsPerPage={Number(itemRecords?.meta.limit)}
             onRecordsPerPageChange={(l: number) => {
               const nextValues = {
-                ...form.values,
+                ...query.values,
                 limit: String(l),
                 page: '1',
               }
 
-              form.setValues(nextValues)
+              query.setValues(nextValues)
               callItems(nextValues)
             }}
             sortStatus={{
-              columnAccessor: form.values.sort ? form.values.sort : 'createdAt',
-              direction: form.values.order === 'asc' ? 'asc' : 'desc',
+              columnAccessor: query.values.sort
+                ? query.values.sort
+                : 'createdAt',
+              direction: query.values.order === 'asc' ? 'asc' : 'desc',
             }}
             onSortStatusChange={({ columnAccessor, direction }) => {
               const nextValues = {
-                ...form.values,
+                ...query.values,
                 sort: columnAccessor.toString(),
                 order: direction,
                 page: '1',
               }
 
-              form.setValues(nextValues)
+              query.setValues(nextValues)
               callItems(nextValues)
             }}
             columns={[
@@ -185,12 +185,31 @@ export default function ItemManuPageUI() {
               },
               { accessor: 'name', sortable: true },
               {
+                title: 'Category',
                 accessor: 'categoryId',
                 sortable: true,
                 render: (item) => <CategoryPill categoryId={item.categoryId} />,
               },
-              { accessor: 'storePriceThb', sortable: true },
-              { accessor: 'stockQty', sortable: true },
+              {
+                title: 'Price (THB)',
+                accessor: 'storePriceThb',
+                sortable: true,
+                textAlign: 'right',
+                render: (item) =>
+                  Number(item.storePriceThb).toLocaleString('th-TH', {
+                    style: 'currency',
+                    currency: 'THB',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }),
+              },
+              {
+                title: 'Stock Quantity',
+                accessor: 'stockQty',
+                sortable: true,
+                textAlign: 'right',
+                render: (item) => item.stockQty.toLocaleString(),
+              },
               {
                 accessor: 'id',
                 title: 'Row actions',
@@ -234,7 +253,7 @@ export default function ItemManuPageUI() {
                 ),
               },
             ]}
-            records={resultItems?.data}
+            records={itemRecords?.data}
           ></DataTable>
         </form>
         {error ? (

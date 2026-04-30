@@ -11,13 +11,13 @@ export default function Header() {
       notifications.show({
         color: 'green',
         title: 'Success!',
-        message: 'Logout success',
+        message: 'Sign Out success',
       })
-      //redirect to login
+      navigate({ to: '/sign-in' })
     } catch (error) {
       notifications.show({
         title: 'Error!',
-        message: 'Signout failed',
+        message: 'Sign Out failed',
         color: 'red',
       })
     }
@@ -34,17 +34,15 @@ export default function Header() {
           Hobby Shop
         </h1>
       </nav>
-      {!!session && (
+      {session ? (
         <div className="flex items-center text-right">
           <div className="mx-5">{session.user?.name}</div>
 
-          <Button
-            onClick={() => {
-              handleSignOut()
-            }}
-          >
-            Signout
-          </Button>
+          <Button onClick={handleSignOut}>Sign Out</Button>
+        </div>
+      ) : (
+        <div className="flex items-center text-right">
+          <Button onClick={() => navigate({ to: '/sign-in' })}>Sign In</Button>
         </div>
       )}
     </header>
