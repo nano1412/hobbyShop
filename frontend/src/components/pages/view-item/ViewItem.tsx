@@ -1,4 +1,3 @@
-import Header from '@/components/common/Header'
 import { eden } from '@/lib/eden'
 
 import { useNavigate, useParams } from '@tanstack/react-router'
@@ -8,11 +7,8 @@ import { CategoryPill } from '../item-menu/CategoryPill'
 import { Button, Center, Image } from '@mantine/core'
 import { IconPhotoOff } from '@tabler/icons-react'
 import type { itemResponse } from '@/scripts/type'
-import { authClient } from '@/lib/auth-client'
 
 export default function ViewItemUI() {
-  const { data: session } = authClient.useSession()
-
   const navigate = useNavigate()
   const { id } = useParams({ from: '/(app)/view-item/$id' })
   const [loading, setLoading] = useState(false)
@@ -88,7 +84,6 @@ export default function ViewItemUI() {
 
   return (
     <>
-      <Header />
       {error ? (
         <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
