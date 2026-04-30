@@ -13,7 +13,7 @@ export default function Header() {
         title: 'Success!',
         message: 'Sign Out success',
       })
-      navigate({ to: '/signin' })
+      navigate({ to: '/sign-in' })
     } catch (error) {
       notifications.show({
         title: 'Error!',
@@ -42,7 +42,7 @@ export default function Header() {
         </div>
       ) : (
         <div className="flex items-center text-right">
-          <Button onClick={() => navigate({ to: '/signin' })}>Sign In</Button>
+          <Button onClick={() => navigate({ to: '/sign-in' })}>Sign In</Button>
         </div>
       )}
     </header>

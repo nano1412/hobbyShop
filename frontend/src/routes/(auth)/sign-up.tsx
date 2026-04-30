@@ -1,7 +1,7 @@
-import SignUpUI from '@/components/pages/signup/SignUp'
+import SignUpUI from '@/components/pages/sign-up/SignUp'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(auth)/signup')({
+export const Route = createFileRoute('/(auth)/sign-up')({
   component: SignUp,
 })
 

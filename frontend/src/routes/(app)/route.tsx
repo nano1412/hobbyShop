@@ -2,23 +2,23 @@ import Header from '@/components/common/Header'
 import { authClient } from '@/lib/auth-client'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
-const checkValidSession = async () => {
+const checkIsHaveNoSession = async () => {
   const { data: session } = await authClient.getSession()
 
   if (!session) {
     throw redirect({
-      to: '/signin',
+      to: '/sign-in',
     })
   }
 }
 
 export const Route = createFileRoute('/(app)')({
-  beforeLoad: () => checkValidSession(),
-  loader: () => checkValidSession(),
-  component: RouteComponent,
+  beforeLoad: () => checkIsHaveNoSession(),
+  loader: () => checkIsHaveNoSession(),
+  component: AppicationComponent,
 })
 
-function RouteComponent() {
+function AppicationComponent() {
   return (
     <>
       <Header />

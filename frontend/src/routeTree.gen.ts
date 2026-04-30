@@ -13,8 +13,8 @@ import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
-import { Route as authSignupRouteImport } from './routes/(auth)/signup'
-import { Route as authSigninRouteImport } from './routes/(auth)/signin'
+import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as appAddItemRouteImport } from './routes/(app)/add-item'
 import { Route as appViewItemIdRouteImport } from './routes/(app)/view-item/$id'
 import { Route as appEditItemIdRouteImport } from './routes/(app)/edit-item/$id'
@@ -37,14 +37,14 @@ const appIndexRoute = appIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appRouteRoute,
 } as any)
-const authSignupRoute = authSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const authSignUpRoute = authSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
   getParentRoute: () => authRouteRoute,
 } as any)
-const authSigninRoute = authSigninRouteImport.update({
-  id: '/signin',
-  path: '/signin',
+const authSignInRoute = authSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => authRouteRoute,
 } as any)
 const appAddItemRoute = appAddItemRouteImport.update({
@@ -66,8 +66,8 @@ const appEditItemIdRoute = appEditItemIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/not-found': typeof NotFoundRoute
   '/add-item': typeof appAddItemRoute
-  '/signin': typeof authSigninRoute
-  '/signup': typeof authSignupRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
   '/': typeof appIndexRoute
   '/edit-item/$id': typeof appEditItemIdRoute
   '/view-item/$id': typeof appViewItemIdRoute
@@ -75,8 +75,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/not-found': typeof NotFoundRoute
   '/add-item': typeof appAddItemRoute
-  '/signin': typeof authSigninRoute
-  '/signup': typeof authSignupRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
   '/': typeof appIndexRoute
   '/edit-item/$id': typeof appEditItemIdRoute
   '/view-item/$id': typeof appViewItemIdRoute
@@ -87,8 +87,8 @@ export interface FileRoutesById {
   '/(auth)': typeof authRouteRouteWithChildren
   '/not-found': typeof NotFoundRoute
   '/(app)/add-item': typeof appAddItemRoute
-  '/(auth)/signin': typeof authSigninRoute
-  '/(auth)/signup': typeof authSignupRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-up': typeof authSignUpRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/edit-item/$id': typeof appEditItemIdRoute
   '/(app)/view-item/$id': typeof appViewItemIdRoute
@@ -98,8 +98,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/not-found'
     | '/add-item'
-    | '/signin'
-    | '/signup'
+    | '/sign-in'
+    | '/sign-up'
     | '/'
     | '/edit-item/$id'
     | '/view-item/$id'
@@ -107,8 +107,8 @@ export interface FileRouteTypes {
   to:
     | '/not-found'
     | '/add-item'
-    | '/signin'
-    | '/signup'
+    | '/sign-in'
+    | '/sign-up'
     | '/'
     | '/edit-item/$id'
     | '/view-item/$id'
@@ -118,8 +118,8 @@ export interface FileRouteTypes {
     | '/(auth)'
     | '/not-found'
     | '/(app)/add-item'
-    | '/(auth)/signin'
-    | '/(auth)/signup'
+    | '/(auth)/sign-in'
+    | '/(auth)/sign-up'
     | '/(app)/'
     | '/(app)/edit-item/$id'
     | '/(app)/view-item/$id'
@@ -161,18 +161,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(auth)/signup': {
-      id: '/(auth)/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof authSignupRouteImport
+    '/(auth)/sign-up': {
+      id: '/(auth)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof authSignUpRouteImport
       parentRoute: typeof authRouteRoute
     }
-    '/(auth)/signin': {
-      id: '/(auth)/signin'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof authSigninRouteImport
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof authRouteRoute
     }
     '/(app)/add-item': {
@@ -218,13 +218,13 @@ const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
 )
 
 interface authRouteRouteChildren {
-  authSigninRoute: typeof authSigninRoute
-  authSignupRoute: typeof authSignupRoute
+  authSignInRoute: typeof authSignInRoute
+  authSignUpRoute: typeof authSignUpRoute
 }
 
 const authRouteRouteChildren: authRouteRouteChildren = {
-  authSigninRoute: authSigninRoute,
-  authSignupRoute: authSignupRoute,
+  authSignInRoute: authSignInRoute,
+  authSignUpRoute: authSignUpRoute,
 }
 
 const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
