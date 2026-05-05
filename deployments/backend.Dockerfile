@@ -10,6 +10,7 @@ RUN bun install --frozen-lockfile
 COPY backend ./backend
 
 WORKDIR /app/backend
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
 RUN bunx prisma generate
 RUN bun build \
     --compile \
