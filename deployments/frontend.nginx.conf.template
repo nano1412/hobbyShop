@@ -1,11 +1,11 @@
 server {
-  listen ${PORT};
+  listen 0.0.0.0:${PORT};
+
   server_name _;
 
   root /usr/share/nginx/html;
   index index.html;
 
-  # Serve static assets and route unknown paths to index.html for SPA routing.
   location / {
     try_files $uri $uri/ /index.html;
   }
