@@ -1,15 +1,9 @@
-import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
-import type { QueryClient } from '@tanstack/react-query'
 import { ColorSchemeScript, MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import { ModalsProvider } from '@mantine/modals'
@@ -24,12 +18,9 @@ import '@mantine/dates/styles.css'
 import '@mantine/dropzone/styles.css'
 import theme from '@/theme'
 import RootLayout from '@/components/layouts/RootLayout'
+import { createRootRoute } from '@tanstack/react-router'
 
-interface MyRouterContext {
-  queryClient: QueryClient
-}
-
-export const Route = createRootRouteWithContext<MyRouterContext>()({
+export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
@@ -59,7 +50,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <MantineProvider>
         <head>
           <ColorSchemeScript />
-          <HeadContent />
         </head>
         <body>
           <TanStackQueryProvider>
@@ -82,7 +72,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               ]}
             />
           </TanStackQueryProvider>
-          <Scripts />
         </body>
       </MantineProvider>
     </html>
