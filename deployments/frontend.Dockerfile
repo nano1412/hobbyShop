@@ -11,7 +11,7 @@ WORKDIR /app/frontend
 RUN bun run build
 
 FROM nginx:alpine AS runner
-COPY deployments/frontend.nginx.conf /etc/nginx/conf.d/default.conf
+COPY deployments/frontend.nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/frontend/dist /usr/share/nginx/html
 
 EXPOSE 80
