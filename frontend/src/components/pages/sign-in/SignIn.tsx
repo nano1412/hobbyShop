@@ -87,7 +87,7 @@ export default function SignInUI() {
             </Text>
             <Button
               component={Link}
-              to="/signup"
+              to="/sign-up"
               variant="subtle"
               size="compact-sm"
             >
