@@ -13,8 +13,8 @@ COPY backend ./backend
 WORKDIR /app/backend
 
 RUN bunx prisma generate --schema=prisma/schema.prisma
-RUN ls -la node_modules/.prisma/client
+RUN bun build src/index.ts --outdir dist --target bun
 
 EXPOSE 3000
 
-CMD ["bun", "run", "src/index.ts"]
+CMD ["bun", "dist/index.js"]
