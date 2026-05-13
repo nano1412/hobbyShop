@@ -2,7 +2,6 @@ FROM oven/bun:1
 
 WORKDIR /app
 
-# Install dependencies
 COPY package.json bun.lock ./
 COPY backend/package.json backend/package.json
 COPY frontend/package.json frontend/package.json
@@ -13,8 +12,8 @@ COPY backend ./backend
 
 WORKDIR /app/backend
 
-# Generate Prisma client
 RUN bunx prisma generate --schema=prisma/schema.prisma
+RUN ls -la node_modules/.prisma/client
 
 EXPOSE 3000
 

@@ -9,7 +9,7 @@ import {
   PaintSpecialPorperty,
   ResinType,
   Currency,
-} from '@prisma/client'
+} from '../../../../generated/prisma'
 import { optionalNumeric, optionalString } from '@/utils/elysiaTypeUtil'
 
 export const ResponseItemModel = t.Object({

@@ -16,6 +16,9 @@ const config = defineConfig({
       spa: {
         enabled: true,
       },
+      prerender: {
+        enabled: process.env.RAILWAY_ENVIRONMENT ? false : true,
+      },
     }),
     viteReact(),
   ],
