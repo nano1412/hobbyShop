@@ -1,5 +1,5 @@
 import prisma from '@/lib/db'
-import { GunplaExclusivity, Prisma } from '../../generated/prisma/client'
+import { Prisma } from '@prisma/client'
 import { deleteImage } from './imageKit.service'
 import { ResponseItem } from '@/modules/item/model/responseItem.model'
 import { EditItem } from '@/modules/item/model/editItem.model'

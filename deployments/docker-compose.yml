@@ -8,6 +8,8 @@ services:
     environment:
       PORT: ${PORT:-3000}
     restart: unless-stopped
+    ports:
+      - '3000:3000'
 
   frontend:
     build:
@@ -17,3 +19,5 @@ services:
         # local docker compose default
         VITE_API_URL: ${VITE_API_URL:-http://backend:3000}
     restart: unless-stopped
+    ports:
+      - '80:80'

@@ -9,7 +9,7 @@ import {
   PaintSpecialPorperty,
   ResinType,
   Currency,
-} from '../../../../generated/prisma/client'
+} from '@prisma/client'
 import { optionalNumeric, optionalString } from '@/utils/elysiaTypeUtil'
 
 export const AddItemModel = t.Object({
