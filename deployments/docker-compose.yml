@@ -5,16 +5,15 @@ services:
       dockerfile: deployments/backend.Dockerfile
     env_file:
       - ../backend/.env
-    ports:
-      - '3000:3000'
+    environment:
+      PORT: ${PORT:-3000}
+    restart: unless-stopped
 
   frontend:
     build:
       context: ..
       dockerfile: deployments/frontend.Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
-    ports:
-      - '80:80'
-    depends_on:
-      - backend
+        # local docker compose default
+        VITE_API_URL: ${VITE_API_URL:-http://backend:3000}
+    restart: unless-stopped
