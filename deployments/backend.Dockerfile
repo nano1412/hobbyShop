@@ -12,12 +12,10 @@ RUN bun install --frozen-lockfile
 # Copy backend
 COPY backend ./backend
 
-WORKDIR /app/backend
-
 # Generate Prisma client
-RUN bunx prisma generate
+RUN bunx prisma generate --schema=backend/prisma/schema.prisma
 
-ENV NODE_ENV=production
+WORKDIR /app/backend
 
 EXPOSE 3000
 
