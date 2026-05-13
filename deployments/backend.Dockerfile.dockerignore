@@ -1,13 +1,22 @@
-FROM gcr.io/distroless/base
-WORKDIR /app
+# Default: ignore everything
+**
 
-COPY --from=build /app/backend/server ./server
+# Keep monorepo files needed by backend image build
+!package.json
+!bun.lock
+!backend/package.json
+!frontend/package.json
+!backend/**
 
-COPY --from=build /app/backend/generated ./generated
-COPY --from=build /app/backend/prisma ./prisma
-COPY --from=build /app/backend/node_modules/.prisma ./node_modules/.prisma
+# Exclude backend noise
+backend/node_modules
+backend/dist
+backend/.turbo
+backend/.cache
+backend/.DS_Store
 
-ENV NODE_ENV=production
-EXPOSE 3000
-
-CMD ["./server"]
+# Exclude repo noise
+.git
+.github
+.vscode
+**/.DS_Store
