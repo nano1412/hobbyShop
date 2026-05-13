@@ -17,7 +17,7 @@ const config = defineConfig({
         enabled: true,
       },
       prerender: {
-        enabled: process.env.RAILWAY_ENVIRONMENT ? false : true,
+        enabled: false,
       },
     }),
     viteReact(),
