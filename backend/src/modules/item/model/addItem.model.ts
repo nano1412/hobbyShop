@@ -11,7 +11,7 @@ import {
   PaintSpecialPorperty,
   ResinType,
   Currency,
-} from '../../../../generated/prisma'
+} from '@prisma/client'
 
 export const AddItemModel = t.Object({
   userId: optionalString,
