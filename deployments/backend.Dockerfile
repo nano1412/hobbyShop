@@ -9,11 +9,10 @@ COPY frontend/package.json frontend/package.json
 
 RUN bun install --frozen-lockfile
 
-# Copy backend
-COPY backend ./backend
+WORKDIR /app/backend
 
-# Generate Prisma client
-RUN bunx prisma generate --schema=backend/prisma/schema.prisma
+# Generate Prisma client INSIDE backend package
+RUN bunx prisma generate --schema=prisma/schema.prisma
 
 WORKDIR /app/backend
 
