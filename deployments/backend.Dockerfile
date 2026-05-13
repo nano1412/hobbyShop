@@ -1,13 +1,24 @@
-FROM gcr.io/distroless/base
+FROM oven/bun:1
+
 WORKDIR /app
 
-COPY --from=build /app/backend/server ./server
+# Install dependencies
+COPY package.json bun.lock ./
+COPY backend/package.json backend/package.json
+COPY frontend/package.json frontend/package.json
 
-COPY --from=build /app/backend/generated ./generated
-COPY --from=build /app/backend/prisma ./prisma
-COPY --from=build /app/backend/node_modules/.prisma ./node_modules/.prisma
+RUN bun install --frozen-lockfile
+
+# Copy backend
+COPY backend ./backend
+
+WORKDIR /app/backend
+
+# Generate Prisma client
+RUN bunx prisma generate
 
 ENV NODE_ENV=production
+
 EXPOSE 3000
 
-CMD ["./server"]
+CMD ["bun", "run", "src/index.ts"]
