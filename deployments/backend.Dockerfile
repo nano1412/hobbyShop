@@ -12,6 +12,8 @@ COPY backend ./backend
 
 WORKDIR /app/backend
 
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+
 RUN bunx prisma generate --schema=prisma/schema.prisma
 
 RUN bun build src/index.ts --outdir dist --target bun
