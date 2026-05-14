@@ -21,7 +21,8 @@ RUN cp dist/client/_shell.html dist/client/index.html
 
 FROM nginx:alpine AS runner
 
-COPY deployments/frontend.nginx.conf /etc/nginx/conf.d/default.conf
+# Move to the templates directory instead of conf.d
+COPY deployments/frontend.nginx.conf.template /etc/nginx/templates/default.conf.template
 
 RUN rm -rf /usr/share/nginx/html/*
 
