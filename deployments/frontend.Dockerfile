@@ -15,7 +15,7 @@ WORKDIR /app/frontend
 ENV NODE_ENV=production
 ENV CI=true
 
-RUN bun run build
+RUN npm run build --workspace=frontend
 RUN cp dist/client/_shell.html dist/client/index.html
 
 FROM nginx:alpine AS runner
