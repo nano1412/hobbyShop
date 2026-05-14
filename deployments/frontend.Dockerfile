@@ -1,11 +1,11 @@
-FROM node:22-alpine AS build
+FROM oven/bun:1 AS build
+
 WORKDIR /app
 
 COPY package.json bun.lock ./
 COPY backend/package.json backend/package.json
 COPY frontend/package.json frontend/package.json
 
-RUN npm install -g bun
 RUN bun install --frozen-lockfile
 
 COPY frontend ./frontend
@@ -15,7 +15,8 @@ WORKDIR /app/frontend
 ENV NODE_ENV=production
 ENV CI=true
 
-RUN npm run build --workspace=frontend
+RUN bun run build
+
 RUN cp dist/client/_shell.html dist/client/index.html
 
 FROM nginx:alpine AS runner
