@@ -8,6 +8,7 @@
     "frontend"
   ],
   "scripts": {
+    "postinstall": "bunx prisma generate --schema=backend/prisma/schema.prisma",
     "dev:backend": "cd backend && bun run dev",
     "dev:frontend": "cd frontend && bun run dev",
     "dev": "echo 'Run `bun run dev:backend` and `bun run dev:frontend` in separate terminals'",
