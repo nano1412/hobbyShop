@@ -18,6 +18,6 @@ RUN bunx prisma generate --schema=prisma/schema.prisma
 
 RUN bun build src/index.ts --outdir dist --target bun
 
-EXPOSE ${PORT}
+EXPOSE 3000
 
 CMD ["bun", "dist/index.js"]
