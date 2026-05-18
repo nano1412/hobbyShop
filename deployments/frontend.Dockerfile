@@ -16,12 +16,12 @@ WORKDIR /app/frontend
 RUN bun run build
 RUN cp dist/client/_shell.html dist/client/index.html
 
-RUN echo "=== DIST FILES ==="
-RUN find dist -type f | sort
+FROM nginx:alpine
 
 FROM nginx:alpine
 
 COPY frontend.nginx.conf.template /etc/nginx/templates/default.conf.template
+
 
 RUN rm -rf /usr/share/nginx/html/*
 

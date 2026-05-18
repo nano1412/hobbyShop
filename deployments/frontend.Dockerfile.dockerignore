@@ -7,7 +7,7 @@
 !backend/package.json
 !frontend/package.json
 !frontend/**
-!deployments/frontend.nginx.conf.template 
+!deployments/frontend.nginx.conf
 
 # Exclude frontend noise
 frontend/node_modules
