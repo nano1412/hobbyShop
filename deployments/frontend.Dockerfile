@@ -14,7 +14,7 @@ COPY frontend ./frontend
 WORKDIR /app/frontend
 
 RUN bun run build
-# RUN cp dist/client/_shell.html dist/client/index.html
+RUN cp dist/client/_shell.html dist/client/index.html
 RUN ls -R dist
 
 RUN echo "=== DIST FILES ==="
@@ -30,4 +30,4 @@ COPY --from=build /app/frontend/dist/client/ /usr/share/nginx/html/
 
 EXPOSE 80
 
-CMD ["/bin/sh", "-c", "echo '---CONFIG---' && cat /etc/nginx/conf.d/default.conf && echo '---START---' && nginx -g 'daemon off;'"]
+CMD ["nginx", "-g", "daemon off;"]
