@@ -20,7 +20,7 @@ RUN find dist -type f | sort
 
 FROM nginx:alpine AS runner
 
-COPY deployments/frontend.nginx.conf.template /etc/nginx/templates/default.conf.template
+COPY frontend.nginx.conf.template /etc/nginx/templates/default.conf.template
 
 RUN rm -rf /usr/share/nginx/html/*
 
