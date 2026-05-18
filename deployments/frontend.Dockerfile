@@ -27,4 +27,7 @@ COPY --from=build /app/frontend/dist/client/ /usr/share/nginx/html/
 
 EXPOSE 80
 
+RUN ls -R /usr/share/nginx/html
+RUN cat /usr/share/nginx/html/index.html | head
+
 CMD ["nginx", "-g", "daemon off;"]
