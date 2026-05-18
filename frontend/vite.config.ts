@@ -16,6 +16,10 @@ const config = defineConfig({
       spa: {
         enabled: true,
       },
+      prerender: {
+        enabled: false,
+        crawlLinks: false,
+      },
     }),
     viteReact(),
   ],

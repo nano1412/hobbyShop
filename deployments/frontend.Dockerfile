@@ -14,18 +14,18 @@ WORKDIR /app/frontend
 
 ENV NODE_ENV=production
 ENV CI=true
+ENV TANSTACK_START_PRERENDER=false
 
 RUN bun run build
 
-RUN cp dist/client/_shell.html dist/client/index.html
 
 FROM nginx:alpine AS runner
 
-COPY deployments/frontend.nginx.conf /etc/nginx/conf.d/default.conf
+COPY deployments/frontend.nginx.conf.template \
+     /etc/nginx/templates/default.conf.template
 
 RUN rm -rf /usr/share/nginx/html/*
 
 COPY --from=build /app/frontend/dist/client/ /usr/share/nginx/html/
-
 
 CMD ["nginx", "-g", "daemon off;"]

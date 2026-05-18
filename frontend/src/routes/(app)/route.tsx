@@ -14,7 +14,6 @@ const checkIsHaveNoSession = async () => {
 
 export const Route = createFileRoute('/(app)')({
   beforeLoad: () => checkIsHaveNoSession(),
-  loader: () => checkIsHaveNoSession(),
   component: AppicationComponent,
 })
 
