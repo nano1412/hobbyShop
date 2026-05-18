@@ -14,11 +14,8 @@ COPY frontend ./frontend
 WORKDIR /app/frontend
 
 RUN bun run build
-RUN cp dist/client/_shell.html dist/client/index.html
-RUN ls -R dist
 
-RUN echo "=== DIST FILES ==="
-RUN find dist -type f | sort
+RUN cp dist/client/_shell.html dist/client/index.html
 
 FROM nginx:alpine
 
