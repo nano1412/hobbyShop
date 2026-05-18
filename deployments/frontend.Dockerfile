@@ -18,7 +18,7 @@ RUN cp dist/client/_shell.html dist/client/index.html
 
 FROM nginx:alpine
 
-COPY deployments/frontend.nginx.conf.template /etc/nginx/conf.d/default.conf
+COPY deployments/frontend.nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN rm -rf /usr/share/nginx/html/*
 
