@@ -4,10 +4,15 @@
 # Keep monorepo files needed by frontend image build
 !package.json
 !bun.lock
+
+!backend/
 !backend/package.json
-!frontend/package.json
+
+!frontend/
 !frontend/**
-!deployments/frontend.nginx.conf.template 
+
+!deployments/
+!deployments/frontend.nginx.conf.template
 
 # Exclude frontend noise
 frontend/node_modules
