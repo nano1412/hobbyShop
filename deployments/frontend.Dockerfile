@@ -19,15 +19,12 @@ RUN cp dist/client/_shell.html dist/client/index.html
 
 FROM nginx:alpine
 
-COPY deployments/frontend.nginx.conf /etc/nginx/conf.d/default.conf
+COPY deployments/frontend.nginx.conf.template /etc/nginx/templates/default.conf.template
 
 RUN rm -rf /usr/share/nginx/html/*
 
 COPY --from=build /app/frontend/dist/client/ /usr/share/nginx/html/
 
 EXPOSE 80
-
-RUN ls -R /usr/share/nginx/html
-RUN cat /usr/share/nginx/html/index.html | head
 
 CMD ["nginx", "-g", "daemon off;"]
