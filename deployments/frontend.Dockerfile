@@ -13,6 +13,13 @@ COPY frontend ./frontend
 
 WORKDIR /app/frontend
 
+RUN echo $RANDOM
+
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
+RUN echo "VITE_API_URL=$VITE_API_URL"
+
 RUN bun run build
 
 RUN cp dist/client/_shell.html dist/client/index.html
