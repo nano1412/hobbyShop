@@ -13,7 +13,6 @@ const checkIsHaveSession = async () => {
 
 export const Route = createFileRoute('/(auth)')({
   beforeLoad: () => checkIsHaveSession(),
-  loader: () => checkIsHaveSession(),
   component: AuthComponent,
 })
 

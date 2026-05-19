@@ -1,4 +1,6 @@
 import { Static, t } from 'elysia'
+
+import { optionalNumeric, optionalString } from '@/utils/elysiaTypeUtil'
 import {
   ColorTone,
   GunplaExclusivity,
@@ -9,8 +11,7 @@ import {
   PaintSpecialPorperty,
   ResinType,
   Currency,
-} from '../../../../generated/prisma/client'
-import { optionalNumeric, optionalString } from '@/utils/elysiaTypeUtil'
+} from '@prisma/client'
 
 export const AddItemModel = t.Object({
   userId: optionalString,
