@@ -6,7 +6,7 @@ import prisma from '@/lib/db'
 import { env } from '@/config/env'
 
 export const auth = betterAuth({
-  basePath: '/auth',
+  basePath: '/api/auth',
   trustedOrigins: env.FRONTEND_ORIGINS,
   emailAndPassword: {
     enabled: true,
