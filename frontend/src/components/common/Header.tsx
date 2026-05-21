@@ -31,7 +31,7 @@ export default function Header() {
           className="text-2xl font-bold cursor-pointer"
           onClick={() => navigate({ to: '/' })}
         >
-          Hobby Shop
+          Nano's Hobby Shop
         </h1>
       </nav>
       {session ? (
